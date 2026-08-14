@@ -1,1486 +1,512 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>أكاديمية الذكاء الاصطناعي - نظام متكامل</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
-        
-        * { font-family: 'Tajawal', sans-serif; box-sizing: border-box; }
-        body { background-color: #030712; color: #f9fafb; overflow-x: hidden; }
-
-        .glass-panel {
-            background: rgba(17, 24, 39, 0.75);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .glass-card {
-            background: rgba(31, 41, 55, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(10px);
-            transition: all 0.3s ease;
-        }
-        .glass-card:hover {
-            transform: translateY(-3px);
-            border-color: rgba(59, 130, 246, 0.4);
-            box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
-        }
-
-        .glass-button {
-            background: rgba(59, 130, 246, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            backdrop-filter: blur(8px);
-            transition: all 0.3s ease;
-        }
-        .glass-button:hover {
-            background: rgba(59, 130, 246, 0.35);
-            border-color: rgba(96, 165, 250, 0.8);
-            box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
-        }
-        .glass-button:active { transform: scale(0.96); }
-
-        /* زر الدعم الفني - تصميم خاص */
-        .telegram-support-btn {
-            background: linear-gradient(135deg, rgba(0, 136, 204, 0.2) 0%, rgba(36, 169, 220, 0.25) 100%);
-            border: 1px solid rgba(36, 169, 220, 0.5);
-            backdrop-filter: blur(10px);
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-        .telegram-support-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: right 0.6s;
-        }
-        .telegram-support-btn:hover::before { right: 100%; }
-        .telegram-support-btn:hover {
-            background: linear-gradient(135deg, rgba(0, 136, 204, 0.4) 0%, rgba(36, 169, 220, 0.5) 100%);
-            border-color: rgba(56, 189, 240, 0.9);
-            box-shadow: 0 0 25px rgba(36, 169, 220, 0.6), 0 0 40px rgba(0, 136, 204, 0.3);
-            transform: translateY(-2px);
-        }
-        .telegram-support-btn:active { transform: translateY(0) scale(0.97); }
-        
-        .tg-icon-glow {
-            filter: drop-shadow(0 0 8px rgba(36, 169, 220, 0.8));
-            animation: tgPulse 2s ease-in-out infinite;
-        }
-        @keyframes tgPulse {
-            0%, 100% { filter: drop-shadow(0 0 6px rgba(36, 169, 220, 0.6)); }
-            50% { filter: drop-shadow(0 0 14px rgba(56, 189, 240, 1)); }
-        }
-
-        .online-dot {
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            width: 8px;
-            height: 8px;
-            background: #22c55e;
-            border-radius: 50%;
-            border: 2px solid #030712;
-            animation: onlinePing 1.5s infinite;
-        }
-        @keyframes onlinePing {
-            0% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7); }
-            70% { box-shadow: 0 0 0 8px rgba(34, 197, 94, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(34, 197, 94, 0); }
-        }
-
-        .glow-orb {
-            position: absolute;
-            border-radius: 50%;
-            filter: blur(80px);
-            z-index: 0;
-            animation: floatOrb 12s infinite alternate ease-in-out;
-        }
-        @keyframes floatOrb {
-            0% { transform: translate(0, 0) scale(1); }
-            100% { transform: translate(-40px, 60px) scale(0.95); }
-        }
-
-        ::-webkit-scrollbar { width: 6px; height: 6px; }
-        ::-webkit-scrollbar-track { background: #030712; }
-        ::-webkit-scrollbar-thumb { background: #1f2937; border-radius: 10px; }
-        ::-webkit-scrollbar-thumb:hover { background: #374151; }
-
-        .xp-float {
-            position: fixed;
-            pointer-events: none;
-            font-weight: 900;
-            font-size: 24px;
-            color: #fbbf24;
-            text-shadow: 0 0 20px rgba(251, 191, 36, 0.8);
-            animation: floatUp 1.5s ease-out forwards;
-            z-index: 9999;
-        }
-        @keyframes floatUp {
-            0% { opacity: 1; transform: translateY(0) scale(1); }
-            100% { opacity: 0; transform: translateY(-80px) scale(1.5); }
-        }
-
-        .toast {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 10000;
-            animation: slideIn 0.3s ease-out;
-        }
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-
-        .card-flip { perspective: 1000px; }
-        .card-inner {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transition: transform 0.6s;
-            transform-style: preserve-3d;
-        }
-        .card-flip.flipped .card-inner { transform: rotateY(180deg); }
-        .card-front, .card-back {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            backface-visibility: hidden;
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .card-back { transform: rotateY(180deg); }
-
-        .letter-tile {
-            width: 44px;
-            height: 44px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: linear-gradient(135deg, #1e40af, #3730a3);
-            border: 2px solid #60a5fa;
-            border-radius: 8px;
-            font-weight: 900;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.2s;
-            user-select: none;
-        }
-        .letter-tile:hover { transform: translateY(-4px); box-shadow: 0 4px 12px rgba(96, 165, 250, 0.5); }
-        .letter-tile.used { opacity: 0.3; pointer-events: none; }
-
-        .drop-zone { min-height: 80px; transition: all 0.3s; }
-        .drop-zone.drag-over { background: rgba(59, 130, 246, 0.2); border-color: #3b82f6; }
-
-        .draggable-item {
-            cursor: grab;
-            user-select: none;
-            transition: all 0.2s;
-        }
-        .draggable-item:active { cursor: grabbing; transform: scale(1.02); }
-        .draggable-item.placed { opacity: 0.5; pointer-events: none; }
-
-        .progress-bar { transition: width 0.5s ease; }
-
-        .typing-indicator span {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            border-radius: 50%;
-            background: #60a5fa;
-            animation: typing 1.4s infinite;
-        }
-        .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-        .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-        @keyframes typing {
-            0%, 60%, 100% { transform: translateY(0); opacity: 0.7; }
-            30% { transform: translateY(-8px); opacity: 1; }
-        }
-
-        .pulse-ring { animation: pulseRing 2s infinite; }
-        @keyframes pulseRing {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { box-shadow: 0 0 0 15px rgba(239, 68, 68, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-
-        .tab-content { animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .achievement-badge { animation: badgePop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
-        @keyframes badgePop { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
-
-        .shake { animation: shake 0.5s; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-10px); }
-            75% { transform: translateX(10px); }
-        }
-
-        .combo-pulse { animation: comboPulse 0.3s; }
-        @keyframes comboPulse { 0% { transform: scale(1); } 50% { transform: scale(1.3); } 100% { transform: scale(1); } }
-
-        .gradient-text {
-            background: linear-gradient(90deg, #3b82f6, #a855f7, #ec4899);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            background-size: 200% auto;
-            animation: gradientFlow 3s linear infinite;
-        }
-        @keyframes gradientFlow { to { background-position: 200% center; } }
-
-        /* نافذة الدعم الفني */
-        .support-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(8px);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: fadeIn 0.3s ease;
-        }
-        .support-modal.hidden { display: none; }
-        .support-box {
-            background: linear-gradient(135deg, rgba(17, 24, 39, 0.95), rgba(31, 41, 55, 0.95));
-            border: 1px solid rgba(36, 169, 220, 0.4);
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 420px;
-            width: 90%;
-            animation: modalPop 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-        }
-        @keyframes modalPop {
-            0% { transform: scale(0.7); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-
-        /* زر عائم للدعم الفني */
-        .floating-support {
-            position: fixed;
-            bottom: 25px;
-            left: 25px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #0088cc, #24a9dc);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 30px rgba(0, 136, 204, 0.6), 0 0 0 4px rgba(0, 136, 204, 0.15);
-            cursor: pointer;
-            z-index: 500;
-            transition: all 0.3s ease;
-            animation: floatingBounce 3s ease-in-out infinite;
-        }
-        .floating-support:hover {
-            transform: scale(1.1) rotate(-10deg);
-            box-shadow: 0 12px 40px rgba(36, 169, 220, 0.8), 0 0 0 6px rgba(36, 169, 220, 0.25);
-        }
-        .floating-support::before {
-            content: '';
-            position: absolute;
-            inset: -4px;
-            border-radius: 50%;
-            border: 2px solid rgba(56, 189, 240, 0.6);
-            animation: ringExpand 2s infinite;
-        }
-        @keyframes floatingBounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
-        }
-        @keyframes ringExpand {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(1.4); opacity: 0; }
-        }
-        .floating-support .badge {
-            position: absolute;
-            top: -4px;
-            right: -4px;
-            background: #ef4444;
-            color: white;
-            font-size: 10px;
-            font-weight: 900;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 2px solid #030712;
-            animation: onlinePing 1.5s infinite;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>الأكاديمية الذكية الشاملة v4</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
+*{font-family:'Tajawal',sans-serif;box-sizing:border-box}
+body{background:#030712;color:#f9fafb;overflow:hidden}
+::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#1f2937;border-radius:9px}
+.panel{background:rgba(17,24,39,.78);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.08)}
+.card{background:rgba(31,41,55,.6);border:1px solid rgba(255,255,255,.06);transition:.25s}
+.card:hover{transform:translateY(-3px);border-color:rgba(59,130,246,.45);box-shadow:0 0 14px rgba(59,130,246,.2)}
+.btn{background:rgba(59,130,246,.15);border:1px solid rgba(59,130,246,.35);transition:.2s;cursor:pointer}
+.btn:hover{background:rgba(59,130,246,.35);box-shadow:0 0 16px rgba(59,130,246,.4)}
+.btn:active{transform:scale(.95)}
+.nav-item{transition:.2s;cursor:pointer;border:1px solid transparent}
+.nav-item:hover{background:rgba(59,130,246,.12)}
+.nav-item.active{background:linear-gradient(90deg,rgba(59,130,246,.25),rgba(168,85,247,.18));border-color:rgba(59,130,246,.4)}
+.view{display:none;animation:vin .35s ease}
+.view.on{display:flex}
+@keyframes vin{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+.grad{background:linear-gradient(90deg,#3b82f6,#a855f7,#ec4899);-webkit-background-clip:text;background-clip:text;color:transparent;background-size:200% auto;animation:gflow 3s linear infinite}
+@keyframes gflow{to{background-position:200% center}}
+.xp-float{position:fixed;pointer-events:none;font-weight:900;font-size:22px;color:#fbbf24;text-shadow:0 0 18px rgba(251,191,36,.8);animation:fup 1.4s ease-out forwards;z-index:9999}
+@keyframes fup{to{opacity:0;transform:translateY(-80px) scale(1.5)}}
+.toast{animation:tin .3s ease}
+@keyframes tin{from{transform:translateX(100%);opacity:0}to{transform:none;opacity:1}}
+.shake{animation:shk .4s}
+@keyframes shk{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+.card3d{perspective:900px}.card3d .in{position:relative;width:100%;height:100%;transition:transform .5s;transform-style:preserve-3d}
+.card3d.fl .in{transform:rotateY(180deg)}
+.card3d .f,.card3d .b{position:absolute;inset:0;backface-visibility:hidden;border-radius:10px;display:flex;align-items:center;justify-content:center;text-align:center;padding:4px}
+.card3d .b{transform:rotateY(180deg)}
+.tile{width:42px;height:42px;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1e40af,#3730a3);border:2px solid #60a5fa;border-radius:8px;font-weight:900;font-size:17px;cursor:pointer;transition:.15s;user-select:none}
+.tile:hover{transform:translateY(-3px)}
+.tile.used{opacity:.25;pointer-events:none}
+.pbar{transition:width .5s ease}
+.typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#60a5fa;animation:typ 1.2s infinite}
+.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
+@keyframes typ{30%{transform:translateY(-7px);opacity:1}0%,60%,100%{transform:none;opacity:.6}}
+.call-av{animation:avp 2s infinite}
+@keyframes avp{0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}70%{box-shadow:0 0 0 30px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
+.wave{display:flex;gap:3px;align-items:flex-end;height:26px}
+.wave i{width:4px;background:#22c55e;border-radius:4px;animation:wv 1s infinite ease-in-out}
+.wave i:nth-child(2){animation-delay:.15s}.wave i:nth-child(3){animation-delay:.3s}.wave i:nth-child(4){animation-delay:.45s}.wave i:nth-child(5){animation-delay:.6s}
+@keyframes wv{0%,100%{height:6px}50%{height:24px}}
+.tg-btn{background:linear-gradient(135deg,rgba(0,136,204,.25),rgba(36,169,220,.3));border:1px solid rgba(36,169,220,.5);transition:.25s}
+.tg-btn:hover{box-shadow:0 0 22px rgba(36,169,220,.6);transform:translateY(-2px)}
+.opt-btn{transition:.15s}
+.opt-btn.ok{background:rgba(16,185,129,.3)!important;border-color:#10b981!important}
+.opt-btn.no{background:rgba(244,63,94,.3)!important;border-color:#f43f5e!important}
+</style>
 </head>
-<body class="relative min-h-screen">
+<body>
+<canvas id="bg" class="fixed inset-0 pointer-events-none z-0"></canvas>
+<div id="toastBox" class="fixed top-3 right-3 z-[999] flex flex-col gap-2"></div>
 
-    <canvas id="bgCanvas" class="fixed top-0 left-0 w-full h-full pointer-events-none z-0"></canvas>
-    <div class="glow-orb w-96 h-96 bg-blue-600/20 top-10 right-10"></div>
-    <div class="glow-orb w-80 h-80 bg-purple-600/20 bottom-10 left-10" style="animation-delay: -5s;"></div>
-    <div class="glow-orb w-72 h-72 bg-pink-600/15 top-1/2 left-1/2" style="animation-delay: -8s;"></div>
+<div class="relative z-10 h-screen flex flex-col max-w-[1400px] mx-auto p-2 gap-2">
 
-    <div id="toastContainer" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
-
-    <div class="relative z-10 flex flex-col h-screen max-w-7xl mx-auto p-3 gap-3">
-
-        <!-- Header -->
-        <header class="glass-panel rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3">
-            <div class="flex items-center gap-3">
-                <div class="p-3 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl shadow-lg shadow-blue-500/30 relative">
-                    <i data-lucide="sparkles" class="w-6 h-6 text-white animate-pulse"></i>
-                </div>
-                <div>
-                    <h1 class="font-black text-lg gradient-text">الأكاديمية الذكية الشاملة</h1>
-                    <p class="text-[11px] text-gray-400">منظومة التعلم والتحدي الذهني v3.0</p>
-                </div>
-            </div>
-
-            <div class="flex items-center gap-2 flex-wrap">
-                <!-- Level Bar -->
-                <div class="flex flex-col gap-0.5">
-                    <div class="flex items-center justify-between text-[10px] text-gray-400">
-                        <span>المستوى <span id="userLevel" class="text-amber-400 font-black">12</span></span>
-                        <span id="xpToNext">320/500</span>
-                    </div>
-                    <div class="w-28 h-1.5 bg-gray-800 rounded-full overflow-hidden">
-                        <div id="levelBar" class="progress-bar h-full bg-gradient-to-r from-amber-500 to-orange-500 rounded-full" style="width: 64%"></div>
-                    </div>
-                </div>
-
-                <div class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-lg text-[11px] font-bold text-amber-400">
-                    <i data-lucide="flame" class="w-3.5 h-3.5 text-orange-400 animate-bounce"></i> 
-                    <span id="streakDays">5</span> يوم
-                </div>
-                <div class="flex items-center gap-1.5 bg-purple-500/10 border border-purple-500/30 px-2.5 py-1 rounded-lg text-[11px] font-bold text-purple-300">
-                    <i data-lucide="zap" class="w-3.5 h-3.5"></i>
-                    <span id="comboCount">x1</span>
-                </div>
-                <div class="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/30 px-2.5 py-1 rounded-lg text-[11px] font-bold text-amber-400">
-                    <i data-lucide="trophy" class="w-3.5 h-3.5"></i> 
-                    <span id="xpValue">1250</span> XP
-                </div>
-
-                <!-- زر الدعم الفني في التلغرام - جديد -->
-                <a href="https://t.me/m3v30" target="_blank" rel="noopener noreferrer" 
-                   class="telegram-support-btn flex items-center gap-2 px-3 py-1.5 rounded-lg text-[11px] font-bold text-cyan-100 group"
-                   onclick="trackSupportClick(event)">
-                    <span class="relative">
-                        <svg class="w-4 h-4 tg-icon-glow" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                        </svg>
-                        <span class="online-dot"></span>
-                    </span>
-                    <span class="flex flex-col items-start leading-tight">
-                        <span class="text-[10px] text-cyan-100 group-hover:text-white">الدعم الفني</span>
-                        <span class="text-[8px] text-cyan-300/80 font-normal">@m3v30</span>
-                    </span>
-                    <i data-lucide="external-link" class="w-3 h-3 text-cyan-300 group-hover:translate-x-[-3px] transition-transform"></i>
-                </a>
-
-                <button onclick="toggleSound()" id="soundToggle" class="p-2 glass-button rounded-lg" title="الصوت">
-                    <i data-lucide="volume-2" class="w-4 h-4 text-cyan-300"></i>
-                </button>
-            </div>
-        </header>
-
-        <div class="flex-1 grid grid-cols-1 md:grid-cols-12 gap-3 overflow-hidden">
-
-            <!-- Sidebar -->
-            <aside class="md:col-span-3 glass-panel rounded-2xl p-3 flex flex-col gap-2 overflow-y-auto">
-                <h2 class="text-[10px] font-black text-gray-500 tracking-widest uppercase mb-1">الوحدات الذكية</h2>
-                
-                <button onclick="switchTab('dashboard')" class="tab-btn glass-button flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-right w-full text-cyan-300">
-                    <span class="flex items-center gap-2"><i data-lucide="layout-dashboard" class="w-4 h-4"></i> لوحة التحكم</span>
-                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
-                </button>
-                <button onclick="switchTab('games')" class="tab-btn glass-button flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-right w-full text-amber-400">
-                    <span class="flex items-center gap-2"><i data-lucide="gamepad-2" class="w-4 h-4"></i> الألعاب (11 نمط)</span>
-                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
-                </button>
-                <button onclick="switchTab('leaderboard')" class="tab-btn glass-button flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-right w-full text-purple-300">
-                    <span class="flex items-center gap-2"><i data-lucide="award" class="w-4 h-4"></i> التصنيف والشخصيات</span>
-                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
-                </button>
-                <button onclick="switchTab('chat')" class="tab-btn glass-button flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-right w-full text-emerald-300">
-                    <span class="flex items-center gap-2"><i data-lucide="message-square-code" class="w-4 h-4"></i> المساعد الذكي</span>
-                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
-                </button>
-                <button onclick="switchTab('camera')" class="tab-btn glass-button flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-right w-full text-rose-300">
-                    <span class="flex items-center gap-2"><i data-lucide="camera" class="w-4 h-4"></i> الماسح البصري</span>
-                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
-                </button>
-                <button onclick="switchTab('pdf')" class="tab-btn glass-button flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-right w-full text-blue-300">
-                    <span class="flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i> تحليل PDF</span>
-                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
-                </button>
-                <button onclick="switchTab('quiz')" class="tab-btn glass-button flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-right w-full text-pink-300">
-                    <span class="flex items-center gap-2"><i data-lucide="brain-circuit" class="w-4 h-4"></i> مولد الاختبارات</span>
-                    <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
-                </button>
-                <button onclick="switchTab('achievements')" class="tab-btn glass-button flex items-center justify-between p-2.5 rounded-xl text-xs font-bold text-right w-full text-yellow-300">
-                    <span class="flex items-center gap-2"><i data-lucide="medal" class="w-4 h-4"></i> الإنجازات</span>
-                    <span id="badgeCount" class="text-[9px] bg-yellow-500 text-black px-1.5 rounded-full">0</span>
-                </button>
-
-                <!-- زر الدعم الفني في الشريط الجانبي -->
-                <div class="mt-2 pt-2 border-t border-gray-800">
-                    <a href="https://t.me/m3v30" target="_blank" rel="noopener noreferrer" 
-                       class="telegram-support-btn flex items-center justify-between p-2.5 rounded-xl text-xs font-bold w-full text-cyan-100 group">
-                        <span class="flex items-center gap-2">
-                            <svg class="w-4 h-4 tg-icon-glow" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                            </svg>
-                            <span class="flex flex-col text-right">
-                                <span class="text-[11px] text-cyan-100 group-hover:text-white">الدعم الفني 24/7</span>
-                                <span class="text-[9px] text-cyan-300/80 font-normal">@m3v30</span>
-                            </span>
-                        </span>
-                        <span class="flex items-center gap-1">
-                            <span class="w-1.5 h-1.5 bg-emerald-400 rounded-full animate-pulse"></span>
-                            <span class="text-[9px] text-emerald-300">متصل</span>
-                        </span>
-                    </a>
-                </div>
-
-                <!-- Stats Mini -->
-                <div class="mt-auto pt-2 border-t border-gray-800">
-                    <div class="grid grid-cols-2 gap-1.5 text-[10px]">
-                        <div class="bg-gray-900/50 p-2 rounded-lg">
-                            <p class="text-gray-500">الألعاب</p>
-                            <p id="miniGames" class="font-black text-emerald-400">0</p>
-                        </div>
-                        <div class="bg-gray-900/50 p-2 rounded-lg">
-                            <p class="text-gray-500">الدقة</p>
-                            <p id="miniAccuracy" class="font-black text-amber-400">0%</p>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-
-            <!-- Main Panel -->
-            <main class="md:col-span-9 glass-panel rounded-2xl p-3 flex flex-col relative overflow-hidden">
-
-                <!-- DASHBOARD TAB -->
-                <div id="tab-dashboard" class="tab-content flex-1 flex flex-col gap-3 overflow-y-auto pr-1">
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-2">
-                        <div class="glass-card p-3 rounded-xl border-t-2 border-blue-500">
-                            <i data-lucide="trending-up" class="w-4 h-4 text-blue-400 mb-1"></i>
-                            <p class="text-[10px] text-gray-400">النقاط الكلية</p>
-                            <h3 id="dashXP" class="text-lg font-black text-blue-400">0</h3>
-                        </div>
-                        <div class="glass-card p-3 rounded-xl border-t-2 border-emerald-500">
-                            <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400 mb-1"></i>
-                            <p class="text-[10px] text-gray-400">التحديات المحلولة</p>
-                            <h3 id="dashGames" class="text-lg font-black text-emerald-400">0</h3>
-                        </div>
-                        <div class="glass-card p-3 rounded-xl border-t-2 border-amber-500">
-                            <i data-lucide="target" class="w-4 h-4 text-amber-400 mb-1"></i>
-                            <p class="text-[10px] text-gray-400">أفضل سلسلة</p>
-                            <h3 id="dashBestCombo" class="text-lg font-black text-amber-400">0x</h3>
-                        </div>
-                        <div class="glass-card p-3 rounded-xl border-t-2 border-purple-500">
-                            <i data-lucide="medal" class="w-4 h-4 text-purple-400 mb-1"></i>
-                            <p class="text-[10px] text-gray-400">الإنجازات</p>
-                            <h3 id="dashBadges" class="text-lg font-black text-purple-400">0</h3>
-                        </div>
-                    </div>
-
-                    <!-- بطاقة الدعم الفني في لوحة التحكم -->
-                    <div class="bg-gradient-to-r from-cyan-900/40 via-blue-900/30 to-indigo-900/40 p-4 rounded-xl border border-cyan-500/30 flex items-center justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2.5 bg-cyan-600/30 rounded-xl border border-cyan-500/40 relative">
-                                <svg class="w-6 h-6 text-cyan-300 tg-icon-glow" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <h3 class="font-black text-sm text-cyan-200 flex items-center gap-2">
-                                    فريق الدعم الفني متاح
-                                    <span class="flex items-center gap-1 bg-emerald-500/20 border border-emerald-500/40 px-1.5 py-0.5 rounded text-[9px] text-emerald-300 font-bold">
-                                        <span class="w-1 h-1 bg-emerald-400 rounded-full animate-pulse"></span>
-                                        متاح الآن
-                                    </span>
-                                </h3>
-                                <p class="text-[11px] text-gray-400 mt-0.5">تواصل مع الدعم عبر تلغرام <span class="text-cyan-300 font-bold">@m3v30</span> لأي استفسار أو مشكلة تقنية</p>
-                            </div>
-                        </div>
-                        <a href="https://t.me/m3v30" target="_blank" rel="noopener noreferrer" 
-                           class="telegram-support-btn px-4 py-2 rounded-lg text-xs font-bold text-cyan-100 flex items-center gap-1.5 whitespace-nowrap">
-                            <svg class="w-4 h-4" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                            </svg>
-                            فتح المحادثة
-                        </a>
-                    </div>
-
-                    <!-- Daily Challenge -->
-                    <div class="bg-gradient-to-r from-indigo-900/60 via-purple-900/40 to-blue-900/60 p-4 rounded-xl border border-purple-500/30">
-                        <div class="flex items-center justify-between mb-2">
-                            <div class="flex items-center gap-2">
-                                <i data-lucide="sunrise" class="w-5 h-5 text-amber-300"></i>
-                                <h3 class="font-black text-sm text-amber-200">تحدي اليوم</h3>
-                            </div>
-                            <span class="text-[10px] text-gray-400">متبقي: <span id="dailyTimer">--:--</span></span>
-                        </div>
-                        <p id="dailyChallengeText" class="text-xs text-gray-300 mb-3">أكمل 3 ألعاب مختلفة اليوم للحصول على 200 XP إضافي!</p>
-                        <div class="flex items-center gap-2">
-                            <div class="flex-1 h-2 bg-gray-800 rounded-full overflow-hidden">
-                                <div id="dailyProgress" class="progress-bar h-full bg-gradient-to-r from-amber-500 to-pink-500" style="width: 0%"></div>
-                            </div>
-                            <span id="dailyProgressText" class="text-[10px] text-gray-400">0/3</span>
-                        </div>
-                    </div>
-
-                    <!-- Recent Activity -->
-                    <div class="bg-gray-900/60 p-3 rounded-xl border border-gray-800">
-                        <h3 class="font-bold text-xs text-gray-300 mb-2 flex items-center gap-1">
-                            <i data-lucide="activity" class="w-3.5 h-3.5"></i> النشاط الأخير
-                        </h3>
-                        <div id="activityFeed" class="space-y-1.5 max-h-40 overflow-y-auto text-xs">
-                            <p class="text-gray-500 italic">لا يوجد نشاط بعد... ابدأ باللعب!</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- GAMES TAB -->
-                <div id="tab-games" class="tab-content hidden flex-1 flex flex-col gap-3 overflow-y-auto pr-1">
-                    <div class="flex items-center justify-between bg-gray-900/80 p-2.5 rounded-xl border border-gray-800">
-                        <div>
-                            <h2 class="font-black text-xs text-amber-300 flex items-center gap-2">
-                                <i data-lucide="trophy" class="w-4 h-4"></i> ساحة التحديات الذهنية
-                            </h2>
-                            <p class="text-[10px] text-gray-400">اختر نمط اللعبة</p>
-                        </div>
-                        <button onclick="openRandomGame()" class="glass-button px-3 py-1 rounded-lg text-[10px] font-bold text-amber-300 flex items-center gap-1">
-                            <i data-lucide="shuffle" class="w-3 h-3"></i> عشوائي
-                        </button>
-                    </div>
-
-                    <div id="gameArena" class="bg-gray-950/90 border-2 border-amber-500/20 rounded-xl p-4 hidden flex-col gap-3 relative">
-                        <div class="flex justify-between items-center border-b border-gray-800 pb-2">
-                            <h3 id="arenaTitle" class="font-bold text-sm text-amber-400">اللعبة</h3>
-                            <div class="flex items-center gap-2">
-                                <div id="gameTimer" class="text-xs font-mono font-black text-red-400 pulse-ring px-2 py-0.5 rounded bg-red-500/10 hidden">30</div>
-                                <button onclick="closeGameArena()" class="text-[10px] text-gray-400 hover:text-white bg-gray-800 px-2.5 py-1 rounded-lg flex items-center gap-1">
-                                    <i data-lucide="x" class="w-3 h-3"></i> خروج
-                                </button>
-                            </div>
-                        </div>
-                        <div id="arenaBody" class="min-h-[200px] flex flex-col justify-center items-center text-center gap-3">
-                        </div>
-                        <div id="arenaFeedback" class="hidden text-xs font-bold p-2 rounded-lg text-center"></div>
-                    </div>
-
-                    <!-- 11 Game Modes Grid -->
-                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                        <div onclick="startMathBlitz()" class="glass-card p-3 rounded-xl cursor-pointer border-r-4 border-amber-400">
-                            <div class="flex items-center gap-2 mb-1"><i data-lucide="calculator" class="w-4 h-4 text-amber-400"></i><h3 class="font-bold text-[11px]">1. الحساب الذهني</h3></div>
-                            <p class="text-[10px] text-gray-400">معادلات سريعة تتسارع تدريجياً</p>
-                            <div class="mt-2 flex items-center gap-1"><span class="text-[9px] text-amber-500">+50 XP</span><span class="text-[9px] text-gray-600">•</span><span class="text-[9px] text-blue-400">متوسط</span></div>
-                        </div>
-                        <div onclick="startHistoryRiddles()" class="glass-card p-3 rounded-xl cursor-pointer border-r-4 border-purple-400">
-                            <div class="flex items-center gap-2 mb-1"><i data-lucide="scroll" class="w-4 h-4 text-purple-400"></i><h3 class="font-bold text-[11px]">2. الآلة الزمنية</h3></div>
-                            <p class="text-[10px] text-gray-400">ألغاز تاريخية غامضة</p>
-                            <div class="mt-2 flex items-center gap-1"><span class="text-[9px] text-purple-500">+75 XP</span><span class="text-[9px] text-gray-600">•</span><span class="text-[9px] text-emerald-400">سهل</span></div>
-                        </div>
-                        <div onclick="startTimelineGame()" class="glass-card p-3 rounded-xl cursor-pointer border-r-4 border-blue-400">
-                            <div class="flex items-center gap-2 mb-1"><i data-lucide="hourglass" class="w-4 h-4 text-blue-400"></i><h3 class="font-bold text-[11px]">3. الخط الزمني</h3></div>
-                            <p class="text-[10px] text-gray-400">ترتيب الأحداث زمنياً</p>
-                            <div class="mt-2 flex items-center gap-1"><span class="text-[9px] text-blue-500">+60 XP</span><span class="text-[9px] text-gray-600">•</span><span class="text-[9px] text-amber-400">صعب</span></div>
-                        </div>
-                        <div onclick="startFallacySpotter()" class="glass-card p-3 rounded-xl cursor-pointer border-r-4 border-emerald-400">
-                            <div class="flex items-center gap-2 mb-1"><i data-lucide="shield-alert" class="w-4 h-4 text-emerald-400"></i><h3 class="font-bold text-[11px]">4. المغالطات المنطقية</h3></div>
-                            <p class="text-[10px] text-gray-400">اكتشف الأخطاء المنطقية</p>
-                            <div class="mt-2 flex items-center gap-1"><span class="text-[9px] text-emerald-500">+80 XP</span><span class="text-[9px] text-gray-600">•</span><span class="text-[9px] text-amber-400">صعب</span></div>
-                        </div>
-                        <div onclick="startPhysicsBlitz()" class="glass-card p-3 rounded-xl cursor-pointer border-r-4 border-cyan-400">
-                            <div class="flex items-center gap-2 mb-1"><i data-lucide="atom" class="w-4 h-4 text-cyan-400"></i><h3 class="font-bold text-[11px]">5. تحدي الفيزياء</h3></div>
-                            <p class="text-[10px] text-gray-400">ألغاز فيزيائية مفاهيمية</p>
-                            <div class="mt-2 flex items-center gap-1"><span class="text-[9px] text-cyan-500">+70 XP</span><span class="text-[9px] text-gray-600">•</span><span class="text-[9px] text-amber-400">صعب</span></div>
-                        </div>
-                        <div onclick="startMemoryMatch()" class="glass-card p-3 rounded-xl cursor-pointer border-r-4 border-pink-400">
-                            <div class="flex items-center gap-2 mb-1"><i data-lucide="brain" class="w-4 h-4 text-pink-400"></i><h3 class="font-bold text-[11px]">6. الذاكرة العلمية</h3></div>
-                            <p class="text-[10px] text-gray-400">مطابقة المفاهيم والقوانين</p>
-                            <div class="mt-2 flex items-center gap-1"><span class="text-[9px] text-pink-500">+90 XP</span><span class="text-[9px] text-gray-600">•</span><span class="text-[9px] text-emerald-400">سهل</span></div>
-                        </div>
-                        <div onclick="startLogicMaze()" class="glass-card p-3 rounded-xl cursor-pointer border-r-4 border-indigo-400">
-                            <div class="flex items-center gap-2 mb-1"><i data-lucide="code-2" class="w-4 h-4 text-indigo-400"></i><h3 class="font-bold text-[11px]">7. متاهة البرمجة</h3></div>
-                            <p class="text-[10px] text-gray-400">تتبع الأكواد واكتشاف المخرج</p>
-                            <div class="mt-2 flex items-center gap-1"><span class="text-[9px] text-indigo-500">+75 XP</span><span class="text-[9px] text-gray-600">•</span><span class="text-[9px] text-red-400">خبير</span></div>
-                        </div>
-                        <div onclick="startWordDecipher()" class="glass-card p-3 rounded-xl cursor-pointer border-r-4 border-rose-400">
-                            <div class="flex items-center gap-2 mb-1"><i data-lucide="binary" class="w-4 h-4 text-rose-400"></i><h3 class="font-bold text-[11px]">8. تفكيك المصطلحات</h3></div>
-                            <p class="text-[10px] text-gray-400">إعادة ترتيب الحروف</p>
-                            <div class="mt-2 flex items-center gap-1"><span class="text-[9px] text-rose-500">+60 XP</span><span class="text-[9px] text-gray-600">•</span><span class="text-[9px] text-blue-400">متوسط</span></div>
-                        </div>
-                        <div onclick="startConceptClassifier()" class="glass-card p-3 rounded-xl cursor-pointer border-r-4 border-yellow-400">
-                            <div class="flex items-center gap-2 mb-1"><i data-lucide="layers" class="w-4 h-4 text-yellow-400"></i><h3 class="font-bold text-[11px]">9. تصنيف المفاهيم</h3></div>
-                            <p class="text-[10px] text-gray-400">فرز وسحب المفاهيم</p>
-                            <div class="mt-2 flex items-center gap-1"><span class="text-[9px] text-yellow-500">+70 XP</span><span class="text-[9px] text-gray-600">•</span><span class="text-[9px] text-blue-400">متوسط</span></div>
-                        </div>
-                        <div onclick="startTwentyQuestions()" class="glass-card p-3 rounded-xl cursor-pointer border-r-4 border-teal-400">
-                            <div class="flex items-center gap-2 mb-1"><i data-lucide="help-circle" class="w-4 h-4 text-teal-400"></i><h3 class="font-bold text-[11px]">10. تخمين الشخصية</h3></div>
-                            <p class="text-[10px] text-gray-400">أسئلة ذكية للتخمين</p>
-                            <div class="mt-2 flex items-center gap-1"><span class="text-[9px] text-teal-500">+85 XP</span><span class="text-[9px] text-gray-600">•</span><span class="text-[9px] text-amber-400">صعب</span></div>
-                        </div>
-                        <div onclick="startDailyBrainQuest()" class="glass-card p-3 rounded-xl cursor-pointer border-r-4 border-red-500 sm:col-span-2 lg:col-span-1">
-                            <div class="flex items-center gap-2 mb-1"><i data-lucide="sparkles" class="w-4 h-4 text-red-400"></i><h3 class="font-bold text-[11px]">11. التحدي الشامل (IQ)</h3></div>
-                            <p class="text-[10px] text-gray-400">تحدي مخلوط شامل</p>
-                            <div class="mt-2 flex items-center gap-1"><span class="text-[9px] text-red-500">+150 XP</span><span class="text-[9px] text-gray-600">•</span><span class="text-[9px] text-red-400">خبير</span></div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- باقي التبويبات كما هي... -->
-                <div id="tab-leaderboard" class="tab-content hidden flex-1 flex flex-col gap-3 overflow-y-auto pr-1">
-                    <div class="bg-gradient-to-r from-purple-900/40 via-blue-900/30 to-gray-900 p-3 rounded-2xl border border-purple-500/30 flex flex-col md:flex-row items-center justify-between gap-3">
-                        <div class="flex items-center gap-3">
-                            <div class="p-2.5 bg-purple-600/30 rounded-xl border border-purple-500/40">
-                                <i data-lucide="user-check" class="w-5 h-5 text-purple-300"></i>
-                            </div>
-                            <div>
-                                <h3 class="font-bold text-xs text-purple-200">إعدادات الخصوصية</h3>
-                                <p class="text-[10px] text-gray-400">مارس بخصوصية كاملة</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2 flex-wrap">
-                            <div class="flex items-center gap-1.5 bg-gray-900/80 p-1.5 rounded-lg border border-gray-800">
-                                <span class="text-[10px] text-gray-300">التصنيف:</span>
-                                <label class="relative inline-flex items-center cursor-pointer">
-                                    <input type="checkbox" id="toggleLeaderboard" class="sr-only peer" checked onchange="toggleLeaderboardVisibility(this.checked)">
-                                    <div class="w-8 h-4 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border after:rounded-full after:h-3 after:w-3 after:transition-all peer-checked:bg-purple-600"></div>
-                                </label>
-                            </div>
-                            <select id="avatarSelect" onchange="changeUserAvatar(this.value)" class="bg-gray-800 text-[10px] text-purple-300 font-bold px-2 py-1 rounded-lg border border-purple-500/40">
-                                <option value="الفيزيائي المجهول ⚛️">الفيزيائي المجهول ⚛️</option>
-                                <option value="المحقق التاريخي 📜">المحقق التاريخي 📜</option>
-                                <option value="عبقري الخوارزميات 💻">عبقري الخوارزميات 💻</option>
-                                <option value="مكتشف المجرات 🌌">مكتشف المجرات 🌌</option>
-                                <option value="الفيلسوف الغامض 🧠">الفيلسوف الغامض 🧠</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                        <div class="glass-card p-2.5 rounded-xl border-l-4 border-blue-500">
-                            <p class="text-[10px] text-gray-400">النقاط</p>
-                            <h3 id="statTotalXP" class="text-base font-black text-blue-400">0</h3>
-                        </div>
-                        <div class="glass-card p-2.5 rounded-xl border-l-4 border-emerald-500">
-                            <p class="text-[10px] text-gray-400">التحديات</p>
-                            <h3 id="statGamesWon" class="text-base font-black text-emerald-400">0</h3>
-                        </div>
-                        <div class="glass-card p-2.5 rounded-xl border-l-4 border-amber-500">
-                            <p class="text-[10px] text-gray-400">الدقة</p>
-                            <h3 id="statAccuracy" class="text-base font-black text-amber-400">0%</h3>
-                        </div>
-                        <div class="glass-card p-2.5 rounded-xl border-l-4 border-purple-500">
-                            <p class="text-[10px] text-gray-400">الحالة</p>
-                            <h3 id="statVisibility" class="text-[10px] font-bold text-emerald-400 mt-1">ظاهر</h3>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-900/80 border border-gray-800 rounded-2xl p-3 flex flex-col gap-2">
-                        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
-                            <h3 class="font-bold text-xs text-purple-300 flex items-center gap-1">
-                                <i data-lucide="award" class="w-3.5 h-3.5"></i> لوحة المتصدرين
-                            </h3>
-                            <span class="text-[9px] text-gray-400">هويات رمزية</span>
-                        </div>
-                        <div class="space-y-1.5" id="leaderboardList">
-                            <div class="flex items-center justify-between bg-amber-500/10 border border-amber-500/30 p-2 rounded-lg">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-black text-amber-400 w-5">🥇</span>
-                                    <div><h4 class="font-bold text-[11px] text-amber-200">الراحل عبر الزمن ⏳</h4><p class="text-[9px] text-amber-400/80">أسطورة الأكاديمية</p></div>
-                                </div>
-                                <span class="font-black text-[10px] text-amber-300">3,450 XP</span>
-                            </div>
-                            <div class="flex items-center justify-between bg-gray-800/60 border border-gray-700/40 p-2 rounded-lg">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-sm font-black text-gray-300 w-5">🥈</span>
-                                    <div><h4 class="font-bold text-[11px] text-gray-200">صانع المعادلات 🧮</h4><p class="text-[9px] text-gray-400">عبقري الحساب</p></div>
-                                </div>
-                                <span class="font-black text-[10px] text-gray-300">2,980 XP</span>
-                            </div>
-                            <div id="currentUserRankCard" class="flex items-center justify-between bg-blue-600/20 border border-blue-500/50 p-2 rounded-lg">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-black text-blue-400 w-5">#3</span>
-                                    <div>
-                                        <h4 id="userDisplayName" class="font-bold text-[11px] text-blue-200 flex items-center gap-1">الفيزيائي المجهول ⚛️ <span class="bg-blue-500 text-[8px] text-white px-1 rounded">أنت</span></h4>
-                                        <p class="text-[9px] text-blue-300">باحث متميز</p>
-                                    </div>
-                                </div>
-                                <span id="lbUserXP" class="font-black text-[10px] text-blue-300">0 XP</span>
-                            </div>
-                            <div class="flex items-center justify-between bg-gray-900/50 border border-gray-800 p-2 rounded-lg">
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[10px] font-black text-gray-500 w-5">#4</span>
-                                    <div><h4 class="font-bold text-[11px] text-gray-300">فارس المنطق 🛡️</h4><p class="text-[9px] text-gray-500">محلل فلسفي</p></div>
-                                </div>
-                                <span class="font-black text-[10px] text-gray-400">950 XP</span>
-                            </div>
-                        </div>
-                        <div id="disabledLbBanner" class="hidden p-5 text-center bg-gray-950 rounded-xl border border-dashed border-gray-800">
-                            <i data-lucide="eye-off" class="w-7 h-7 text-gray-600 mx-auto mb-2"></i>
-                            <h4 class="text-xs font-bold text-gray-400">وضع الخصوصية مفعّل</h4>
-                            <p class="text-[9px] text-gray-500 mt-1">نقاطك تُحفظ محلياً فقط</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="tab-chat" class="tab-content hidden flex-1 flex flex-col justify-between gap-2 overflow-hidden">
-                    <div class="bg-gray-900/80 p-2 rounded-xl border border-gray-800 flex items-center justify-between">
-                        <div class="flex items-center gap-2">
-                            <div class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></div>
-                            <span class="text-xs font-bold text-emerald-300">المساعد الذكي متصل</span>
-                        </div>
-                        <button onclick="clearChat()" class="text-[10px] text-gray-400 hover:text-white px-2 py-0.5 bg-gray-800 rounded">مسح</button>
-                    </div>
-                    <div id="chatBox" class="flex-1 overflow-y-auto space-y-3 p-2 bg-gray-950/50 rounded-xl">
-                        <div class="flex items-start gap-2">
-                            <div class="w-8 h-8 rounded-lg bg-blue-600/30 border border-blue-500/40 flex items-center justify-center text-xs font-bold text-blue-400 shrink-0">AI</div>
-                            <div class="bg-gray-900 border border-gray-800 rounded-2xl rounded-tr-none p-3 max-w-[85%] text-xs leading-relaxed text-gray-200">
-                                مرحباً! 🚀 أنا مساعدك الأكاديمي. اسألني عن أي موضوع في الرياضيات، الفيزياء، التاريخ، البرمجة أو أي مجال آخر.
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex items-center gap-2 bg-gray-900 p-2 rounded-xl border border-gray-800">
-                        <input type="text" id="userInput" placeholder="اكتب سؤالك..." class="flex-1 bg-transparent px-3 py-1.5 text-xs text-white focus:outline-none" onkeypress="if(event.key==='Enter')sendMessage()">
-                        <button onclick="sendMessage()" class="glass-button px-4 py-1.5 rounded-lg font-bold text-[10px] text-white bg-blue-600 flex items-center gap-1">
-                            <i data-lucide="send" class="w-3 h-3"></i> إرسال
-                        </button>
-                    </div>
-                </div>
-
-                <div id="tab-camera" class="tab-content hidden flex-1 flex flex-col gap-3 overflow-y-auto">
-                    <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800">
-                        <h2 class="font-bold text-xs text-rose-300 flex items-center gap-2 mb-2">
-                            <i data-lucide="camera" class="w-4 h-4"></i> الماسح البصري الذكي
-                        </h2>
-                    </div>
-                    <div class="flex-1 flex flex-col items-center justify-center gap-3">
-                        <div id="cameraPreview" class="w-full max-w-md aspect-video bg-black rounded-xl overflow-hidden border border-gray-800 flex items-center justify-center">
-                            <div id="cameraPlaceholder" class="text-center">
-                                <i data-lucide="camera-off" class="w-12 h-12 text-gray-600 mx-auto mb-2"></i>
-                                <p class="text-xs text-gray-500">الكاميرا غير مفعلة</p>
-                            </div>
-                            <video id="cameraVideo" autoplay playsinline class="hidden w-full h-full object-cover"></video>
-                        </div>
-                        <div class="flex gap-2">
-                            <button onclick="startCamera()" class="glass-button px-4 py-2 rounded-xl font-bold text-xs text-emerald-300 bg-emerald-600/20 flex items-center gap-1">
-                                <i data-lucide="play" class="w-3.5 h-3.5"></i> تشغيل
-                            </button>
-                            <button onclick="capturePhoto()" class="glass-button px-4 py-2 rounded-xl font-bold text-xs text-blue-300 bg-blue-600/20 flex items-center gap-1">
-                                <i data-lucide="camera" class="w-3.5 h-3.5"></i> التقاط
-                            </button>
-                            <button onclick="stopCamera()" class="glass-button px-4 py-2 rounded-xl font-bold text-xs text-rose-300 bg-rose-600/20 flex items-center gap-1">
-                                <i data-lucide="square" class="w-3.5 h-3.5"></i> إيقاف
-                            </button>
-                        </div>
-                    </div>
-                    <canvas id="cameraCanvas" class="hidden"></canvas>
-                </div>
-
-                <div id="tab-pdf" class="tab-content hidden flex-1 flex flex-col gap-3 overflow-y-auto">
-                    <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800">
-                        <h2 class="font-bold text-xs text-blue-300 flex items-center gap-2 mb-2">
-                            <i data-lucide="file-text" class="w-4 h-4"></i> تحليل وملخصات PDF
-                        </h2>
-                    </div>
-                    <label class="flex-1 flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-700 rounded-xl p-6 hover:border-blue-500/50 hover:bg-blue-900/10 transition cursor-pointer">
-                        <i data-lucide="upload-cloud" class="w-10 h-10 text-blue-400"></i>
-                        <p class="text-xs font-bold text-gray-300">انقر لرفع ملف PDF</p>
-                        <input type="file" id="pdfInput" accept=".pdf" class="hidden" onchange="handlePDFUpload(event)">
-                    </label>
-                    <div id="pdfResults" class="hidden space-y-2"></div>
-                </div>
-
-                <div id="tab-quiz" class="tab-content hidden flex-1 flex flex-col gap-3 overflow-y-auto">
-                    <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800">
-                        <h2 class="font-bold text-xs text-pink-300 flex items-center gap-2 mb-2">
-                            <i data-lucide="brain-circuit" class="w-4 h-4"></i> مولد الاختبارات والبطاقات
-                        </h2>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div class="glass-card p-3 rounded-xl">
-                            <label class="text-[10px] text-gray-400">الموضوع</label>
-                            <select id="quizTopic" class="w-full bg-gray-800 text-xs text-white mt-1 p-2 rounded-lg border border-gray-700">
-                                <option value="math">الرياضيات</option>
-                                <option value="physics">الفيزياء</option>
-                                <option value="history">التاريخ</option>
-                                <option value="science">العلوم العامة</option>
-                                <option value="programming">البرمجة</option>
-                            </select>
-                        </div>
-                        <div class="glass-card p-3 rounded-xl">
-                            <label class="text-[10px] text-gray-400">عدد الأسئلة</label>
-                            <select id="quizCount" class="w-full bg-gray-800 text-xs text-white mt-1 p-2 rounded-lg border border-gray-700">
-                                <option value="5">5 أسئلة</option>
-                                <option value="10">10 أسئلة</option>
-                                <option value="15">15 سؤال</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="generateQuiz()" class="glass-button px-4 py-2.5 rounded-xl font-bold text-xs text-white bg-pink-600 flex items-center justify-center gap-1">
-                            <i data-lucide="wand-2" class="w-3.5 h-3.5"></i> توليد اختبار
-                        </button>
-                        <button onclick="generateFlashcards()" class="glass-button px-4 py-2.5 rounded-xl font-bold text-xs text-amber-300 flex items-center justify-center gap-1">
-                            <i data-lucide="layers" class="w-3.5 h-3.5"></i> بطاقات تعليمية
-                        </button>
-                    </div>
-                    <div id="quizContainer" class="flex-1 flex flex-col gap-2 overflow-y-auto"></div>
-                </div>
-
-                <div id="tab-achievements" class="tab-content hidden flex-1 flex flex-col gap-3 overflow-y-auto">
-                    <div class="bg-gray-900/80 p-3 rounded-xl border border-gray-800">
-                        <h2 class="font-bold text-xs text-yellow-300 flex items-center gap-2">
-                            <i data-lucide="medal" class="w-4 h-4"></i> الإنجازات والشارات
-                        </h2>
-                    </div>
-                    <div id="achievementsGrid" class="grid grid-cols-2 sm:grid-cols-3 gap-2"></div>
-                </div>
-
-            </main>
-        </div>
-
-        <!-- تذييل الدعم الفني -->
-        <footer class="glass-panel rounded-xl p-2 flex items-center justify-between gap-2 flex-wrap">
-            <div class="flex items-center gap-2 text-[10px] text-gray-400">
-                <i data-lucide="shield-check" class="w-3.5 h-3.5 text-emerald-400"></i>
-                <span>جميع الحقوق محفوظة © 2026 الأكاديمية الذكية</span>
-            </div>
-            <div class="flex items-center gap-3 text-[10px]">
-                <span class="text-gray-500">تحتاج مساعدة؟</span>
-                <a href="https://t.me/m3v30" target="_blank" rel="noopener noreferrer" 
-                   class="telegram-support-btn px-3 py-1 rounded-md text-[10px] font-bold text-cyan-100 flex items-center gap-1.5">
-                    <svg class="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                    </svg>
-                    تواصل مع الدعم @m3v30
-                </a>
-            </div>
-        </footer>
+<!-- الهيدر -->
+<header class="panel rounded-xl p-2.5 flex items-center justify-between gap-2 flex-wrap">
+  <div class="flex items-center gap-2">
+    <div class="p-2 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-lg shadow-lg shadow-blue-500/30"><i data-lucide="sparkles" class="w-5 h-5 text-white"></i></div>
+    <div><h1 class="font-black text-sm grad">الأكاديمية الذكية الشاملة</h1><p class="text-[10px] text-gray-400">تعلّم • تحدَّ • تحدّث مع الذكاء</p></div>
+  </div>
+  <div class="flex items-center gap-1.5 flex-wrap">
+    <div class="flex flex-col gap-0.5">
+      <div class="flex justify-between text-[9px] text-gray-400"><span>مستوى <b id="userLevel" class="text-amber-400">1</b></span><span id="xpToNext">0/500</span></div>
+      <div class="w-24 h-1.5 bg-gray-800 rounded-full overflow-hidden"><div id="levelBar" class="pbar h-full bg-gradient-to-r from-amber-500 to-orange-500" style="width:0%"></div></div>
     </div>
+    <span class="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-2 py-1 rounded-md text-[10px] font-bold text-amber-400"><i data-lucide="flame" class="w-3 h-3"></i><span id="streakDays">1</span></span>
+    <span class="flex items-center gap-1 bg-purple-500/10 border border-purple-500/30 px-2 py-1 rounded-md text-[10px] font-bold text-purple-300"><i data-lucide="zap" class="w-3 h-3"></i><span id="comboCount">x0</span></span>
+    <span class="flex items-center gap-1 bg-amber-500/10 border border-amber-500/30 px-2 py-1 rounded-md text-[10px] font-bold text-amber-400"><i data-lucide="trophy" class="w-3 h-3"></i><span id="xpValue">0</span></span>
+    <button id="soundToggle" class="btn p-1.5 rounded-md" title="الصوت"><i data-lucide="volume-2" class="w-4 h-4 text-cyan-300"></i></button>
+    <a href="https://t.me/m3v30" target="_blank" rel="noopener" class="tg-btn flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[10px] font-bold text-cyan-100">
+      <svg class="w-3.5 h-3.5" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      الدعم @m3v30</a>
+  </div>
+</header>
 
-    <!-- زر الدعم الفني العائم -->
-    <div class="floating-support" onclick="openSupportModal()" title="الدعم الفني 24/7">
-        <svg class="w-7 h-7 text-white" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-        </svg>
-        <div class="badge">!</div>
+<div class="flex-1 flex gap-2 overflow-hidden">
+
+<!-- الشريط الجانبي -->
+<nav class="w-16 md:w-44 panel rounded-xl p-1.5 flex flex-col gap-1 overflow-y-auto">
+  <div data-view="home" class="nav-item active flex items-center gap-2 p-2 rounded-lg text-[11px] font-bold text-cyan-300"><i data-lucide="layout-dashboard" class="w-4 h-4 shrink-0"></i><span class="hidden md:block">الرئيسية</span></div>
+  <div data-view="games" class="nav-item flex items-center gap-2 p-2 rounded-lg text-[11px] font-bold text-amber-300"><i data-lucide="gamepad-2" class="w-4 h-4 shrink-0"></i><span class="hidden md:block">الألعاب (11)</span></div>
+  <div data-view="ai" class="nav-item flex items-center gap-2 p-2 rounded-lg text-[11px] font-bold text-emerald-300"><i data-lucide="bot" class="w-4 h-4 shrink-0"></i><span class="hidden md:block">المساعد الصوتي</span></div>
+  <div data-view="quiz" class="nav-item flex items-center gap-2 p-2 rounded-lg text-[11px] font-bold text-pink-300"><i data-lucide="brain-circuit" class="w-4 h-4 shrink-0"></i><span class="hidden md:block">الاختبارات</span></div>
+  <div data-view="pdf" class="nav-item flex items-center gap-2 p-2 rounded-lg text-[11px] font-bold text-blue-300"><i data-lucide="file-text" class="w-4 h-4 shrink-0"></i><span class="hidden md:block">تحليل PDF</span></div>
+  <div data-view="scan" class="nav-item flex items-center gap-2 p-2 rounded-lg text-[11px] font-bold text-rose-300"><i data-lucide="camera" class="w-4 h-4 shrink-0"></i><span class="hidden md:block">الماسح</span></div>
+  <div data-view="board" class="nav-item flex items-center gap-2 p-2 rounded-lg text-[11px] font-bold text-purple-300"><i data-lucide="award" class="w-4 h-4 shrink-0"></i><span class="hidden md:block">التصنيف</span></div>
+  <div data-view="badges" class="nav-item flex items-center gap-2 p-2 rounded-lg text-[11px] font-bold text-yellow-300"><i data-lucide="medal" class="w-4 h-4 shrink-0"></i><span class="hidden md:block">الإنجازات</span></div>
+  <div class="mt-auto pt-1 border-t border-gray-800">
+    <button id="resetBtn" class="w-full flex items-center justify-center gap-1 p-2 rounded-lg text-[10px] text-gray-500 hover:text-rose-400"><i data-lucide="rotate-ccw" class="w-3.5 h-3.5"></i><span class="hidden md:block">تصفير</span></button>
+  </div>
+</nav>
+
+<!-- منطقة الواجهات -->
+<main class="flex-1 panel rounded-xl p-3 overflow-hidden relative">
+
+<!-- الرئيسية -->
+<section id="view-home" class="view on flex-col gap-2.5 h-full overflow-y-auto">
+  <div class="grid grid-cols-2 lg:grid-cols-5 gap-2">
+    <div class="card p-2.5 rounded-lg border-t-2 border-blue-500"><p class="text-[9px] text-gray-400">النقاط</p><h3 id="hXP" class="text-base font-black text-blue-400">0</h3></div>
+    <div class="card p-2.5 rounded-lg border-t-2 border-emerald-500"><p class="text-[9px] text-gray-400">إجابات صحيحة</p><h3 id="hCorrect" class="text-base font-black text-emerald-400">0</h3></div>
+    <div class="card p-2.5 rounded-lg border-t-2 border-amber-500"><p class="text-[9px] text-gray-400">الدقة</p><h3 id="hAcc" class="text-base font-black text-amber-400">0%</h3></div>
+    <div class="card p-2.5 rounded-lg border-t-2 border-purple-500"><p class="text-[9px] text-gray-400">أفضل كومبو</p><h3 id="hCombo" class="text-base font-black text-purple-400">x0</h3></div>
+    <div class="card p-2.5 rounded-lg border-t-2 border-yellow-500"><p class="text-[9px] text-gray-400">الإنجازات</p><h3 id="hBadges" class="text-base font-black text-yellow-400">0</h3></div>
+  </div>
+  <div class="bg-gradient-to-l from-indigo-900/50 to-purple-900/40 p-3 rounded-xl border border-purple-500/30">
+    <div class="flex justify-between items-center mb-1.5"><h3 class="font-black text-xs text-amber-200 flex items-center gap-1"><i data-lucide="sunrise" class="w-4 h-4"></i>تحدي اليوم</h3><span class="text-[9px] text-gray-400">ينتهي خلال <b id="dailyTimer">--:--</b></span></div>
+    <p class="text-[10px] text-gray-300 mb-2">أكمل 3 جولات لعب حقيقية لتربح 200 XP</p>
+    <div class="flex items-center gap-2"><div class="flex-1 h-1.5 bg-gray-800 rounded-full overflow-hidden"><div id="dailyBar" class="pbar h-full bg-gradient-to-r from-amber-500 to-pink-500" style="width:0%"></div></div><span id="dailyTxt" class="text-[9px] text-gray-400">0/3</span></div>
+  </div>
+  <div class="grid md:grid-cols-2 gap-2">
+    <div class="card p-3 rounded-xl flex flex-col gap-2">
+      <h3 class="font-bold text-xs text-emerald-300 flex items-center gap-1"><i data-lucide="bot" class="w-4 h-4"></i>جرّب المساعد الصوتي</h3>
+      <p class="text-[10px] text-gray-400">تحدث معه بالمايك وسيجيبك صوتياً كأنه اتصال حقيقي.</p>
+      <button onclick="switchView('ai')" class="btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-emerald-300 w-fit">بدء محادثة 🎙️</button>
     </div>
-
-    <!-- نافذة الدعم الفني المنبثقة -->
-    <div id="supportModal" class="support-modal hidden" onclick="if(event.target===this)closeSupportModal()">
-        <div class="support-box">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-3">
-                    <div class="p-2.5 bg-cyan-600/30 rounded-xl border border-cyan-500/40 relative">
-                        <svg class="w-8 h-8 text-cyan-300 tg-icon-glow" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                        </svg>
-                        <span class="online-dot"></span>
-                    </div>
-                    <div>
-                        <h3 class="font-black text-base text-cyan-200">الدعم الفني المباشر</h3>
-                        <p class="text-[11px] text-gray-400">متاح 24/7 لمساعدتك</p>
-                    </div>
-                </div>
-                <button onclick="closeSupportModal()" class="w-8 h-8 bg-gray-800 hover:bg-gray-700 rounded-lg flex items-center justify-center text-gray-400 hover:text-white transition">
-                    <i data-lucide="x" class="w-4 h-4"></i>
-                </button>
-            </div>
-
-            <div class="bg-gray-900/60 border border-gray-800 rounded-xl p-4 mb-4">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center font-black text-white text-lg">
-                        م
-                    </div>
-                    <div>
-                        <h4 class="font-bold text-sm text-white flex items-center gap-1.5">
-                            فريق الدعم الفني
-                            <span class="flex items-center gap-0.5 bg-emerald-500/20 border border-emerald-500/40 px-1.5 py-0.5 rounded text-[8px] text-emerald-300">
-                                <span class="w-1 h-1 bg-emerald-400 rounded-full animate-pulse"></span>
-                                متصل الآن
-                            </span>
-                        </h4>
-                        <p class="text-xs text-cyan-300 font-bold">@m3v30</p>
-                    </div>
-                </div>
-                <p class="text-[11px] text-gray-400 leading-relaxed">
-                    نحن هنا لمساعدتك في أي استفسار تقني، مشكلة في الألعاب، أو أي اقتراح لتطوير المنصة.
-                </p>
-            </div>
-
-            <div class="grid grid-cols-2 gap-2 mb-4 text-[11px]">
-                <div class="bg-gray-900/50 p-2.5 rounded-lg border border-gray-800">
-                    <i data-lucide="clock" class="w-3.5 h-3.5 text-cyan-400 mb-1"></i>
-                    <p class="font-bold text-white">وقت الاستجابة</p>
-                    <p class="text-gray-400 text-[10px]">خلال دقائق</p>
-                </div>
-                <div class="bg-gray-900/50 p-2.5 rounded-lg border border-gray-800">
-                    <i data-lucide="languages" class="w-3.5 h-3.5 text-cyan-400 mb-1"></i>
-                    <p class="font-bold text-white">اللغات</p>
-                    <p class="text-gray-400 text-[10px]">العربية، الإنجليزية</p>
-                </div>
-                <div class="bg-gray-900/50 p-2.5 rounded-lg border border-gray-800">
-                    <i data-lucide="headphones" class="w-3.5 h-3.5 text-cyan-400 mb-1"></i>
-                    <p class="font-bold text-white">التوفر</p>
-                    <p class="text-gray-400 text-[10px]">24 ساعة / 7 أيام</p>
-                </div>
-                <div class="bg-gray-900/50 p-2.5 rounded-lg border border-gray-800">
-                    <i data-lucide="star" class="w-3.5 h-3.5 text-amber-400 mb-1"></i>
-                    <p class="font-bold text-white">التقييم</p>
-                    <p class="text-gray-400 text-[10px]">4.9/5 نجوم</p>
-                </div>
-            </div>
-
-            <a href="https://t.me/m3v30" target="_blank" rel="noopener noreferrer" 
-               class="telegram-support-btn w-full flex items-center justify-center gap-2 py-3 rounded-xl text-sm font-bold text-white group">
-                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>
-                </svg>
-                فتح محادثة مع الدعم الفني
-                <i data-lucide="external-link" class="w-4 h-4 group-hover:translate-x-[-3px] transition-transform"></i>
-            </a>
-
-            <p class="text-[9px] text-gray-500 text-center mt-3">
-                بالضغط على الزر سيتم فتح تطبيق تلغرام للمحادثة مع الدعم
-            </p>
-        </div>
+    <div class="card p-3 rounded-xl flex flex-col gap-2">
+      <h3 class="font-bold text-xs text-amber-300 flex items-center gap-1"><i data-lucide="shuffle" class="w-4 h-4"></i>لعبة عشوائية سريعة</h3>
+      <p class="text-[10px] text-gray-400">دع النظام يختار لك تحدياً الآن واكسب النقاط.</p>
+      <button onclick="switchView('games');openRandomGame()" class="btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-amber-300 w-fit">العب الآن 🎮</button>
     </div>
+  </div>
+  <div class="card p-3 rounded-xl">
+    <h3 class="font-bold text-xs text-gray-300 mb-2 flex items-center gap-1"><i data-lucide="activity" class="w-3.5 h-3.5"></i>سجل النشاط</h3>
+    <div id="actFeed" class="space-y-1 max-h-36 overflow-y-auto text-[10px]"><p class="text-gray-500 italic">لا نشاط بعد…</p></div>
+  </div>
+</section>
 
-    <script>
-    // ============= CORE SYSTEM =============
-    const AppState = {
-        xp: 1250,
-        level: 12,
-        gamesPlayed: 0,
-        correctAnswers: 0,
-        totalAnswers: 0,
-        bestCombo: 0,
-        currentCombo: 1,
-        streak: 5,
-        avatar: 'الفيزيائي المجهول ⚛️',
-        visibleInLeaderboard: true,
-        achievements: [],
-        activities: [],
-        dailyGames: 0,
-        soundEnabled: true,
-        gameTimer: null
-    };
+<!-- الألعاب -->
+<section id="view-games" class="view flex-col gap-2.5 h-full">
+  <div id="gamesGrid" class="flex-1 overflow-y-auto">
+    <div class="flex items-center justify-between mb-2">
+      <h2 class="font-black text-sm text-amber-300 flex items-center gap-2"><i data-lucide="trophy" class="w-4 h-4"></i>ساحة التحديات</h2>
+      <button onclick="openRandomGame()" class="btn px-2.5 py-1 rounded-md text-[10px] font-bold text-amber-300 flex items-center gap-1"><i data-lucide="shuffle" class="w-3 h-3"></i>عشوائي</button>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2" id="gamesList"></div>
+  </div>
+  <div id="gameScreen" class="hidden flex-1 flex-col overflow-y-auto">
+    <div class="flex items-center justify-between bg-gray-900/80 p-2 rounded-lg border border-gray-800 mb-2">
+      <button onclick="backToGames()" class="flex items-center gap-1 text-[10px] text-gray-400 hover:text-white bg-gray-800 px-2 py-1 rounded-md"><i data-lucide="arrow-right" class="w-3 h-3"></i>رجوع</button>
+      <h3 id="gsTitle" class="font-bold text-xs text-amber-400"></h3>
+      <div class="flex items-center gap-2">
+        <span id="gsTimer" class="hidden text-[10px] font-mono font-black text-red-400 bg-red-500/10 px-1.5 rounded"></span>
+        <span class="text-[10px] text-gray-400">النقاط: <b id="gsScore" class="text-amber-400">0</b></span>
+      </div>
+    </div>
+    <div id="gsBody" class="flex-1 flex flex-col items-center justify-center gap-3 text-center p-2"></div>
+  </div>
+</section>
 
-    const ACHIEVEMENTS = [
-        { id: 'first_win', icon: '🎯', title: 'البداية', desc: 'أكمل أول تحدٍ', condition: s => s.gamesPlayed >= 1 },
-        { id: 'ten_games', icon: '🏆', title: 'المثابر', desc: 'أكمل 10 تحديات', condition: s => s.gamesPlayed >= 10 },
-        { id: 'fifty_games', icon: '⚡', title: 'الأسطوري', desc: 'أكمل 50 تحدياً', condition: s => s.gamesPlayed >= 50 },
-        { id: 'combo_5', icon: '🔥', title: 'سلسلة نارية', desc: 'حقق سلسلة x5', condition: s => s.bestCombo >= 5 },
-        { id: 'combo_10', icon: '💥', title: 'انفجار ذكاء', desc: 'حقق سلسلة x10', condition: s => s.bestCombo >= 10 },
-        { id: 'xp_1000', icon: '💎', title: 'جامع النقاط', desc: 'اجمع 1000 XP', condition: s => s.xp >= 1000 },
-        { id: 'xp_5000', icon: '👑', title: 'الخبير', desc: 'اجمع 5000 XP', condition: s => s.xp >= 5000 },
-        { id: 'accuracy_90', icon: '🎪', title: 'الدقة العالية', desc: 'حافظ على دقة 90%+', condition: s => s.totalAnswers >= 5 && (s.correctAnswers/s.totalAnswers) >= 0.9 },
-        { id: 'level_5', icon: '🚀', title: 'انطلاقة', desc: 'وصل للمستوى 5', condition: s => s.level >= 5 },
-        { id: 'level_10', icon: '🌟', title: 'نجم الأكاديمية', desc: 'وصل للمستوى 10', condition: s => s.level >= 10 },
-        { id: 'streak_7', icon: '📅', title: 'أسبوع متواصل', desc: '7 أيام متتالية', condition: s => s.streak >= 7 },
-        { id: 'daily_complete', icon: '☀️', title: 'بطل اليوم', desc: 'أكمل تحدي اليوم', condition: s => s.dailyGames >= 3 },
-    ];
+<!-- المساعد الصوتي -->
+<section id="view-ai" class="view flex-col gap-2 h-full">
+  <div class="bg-gray-900/80 p-2 rounded-lg border border-gray-800 flex items-center justify-between">
+    <div class="flex items-center gap-2">
+      <div class="w-8 h-8 rounded-lg bg-emerald-600/30 border border-emerald-500/40 flex items-center justify-center"><i data-lucide="bot" class="w-4 h-4 text-emerald-300"></i></div>
+      <div><h3 class="font-bold text-xs text-emerald-300">الروبوت الذكي</h3><p id="aiStatus" class="text-[9px] text-gray-400">جاهز للمحادثة النصية والصوتية</p></div>
+    </div>
+    <div class="flex items-center gap-1.5">
+      <button id="aiClear" class="text-[9px] text-gray-400 hover:text-white bg-gray-800 px-2 py-1 rounded">مسح</button>
+      <button id="callBtn" class="btn flex items-center gap-1 px-3 py-1.5 rounded-lg text-[10px] font-bold text-emerald-300 bg-emerald-600/20"><i data-lucide="phone" class="w-3.5 h-3.5"></i>اتصال صوتي</button>
+    </div>
+  </div>
+  <div id="chatLog" class="flex-1 overflow-y-auto space-y-2 p-2 bg-gray-950/50 rounded-xl"></div>
+  <div class="flex items-center gap-1.5 bg-gray-900 p-1.5 rounded-xl border border-gray-800">
+    <button id="micBtn" class="btn p-2 rounded-lg" title="تحدث"><i data-lucide="mic" class="w-4 h-4 text-rose-400"></i></button>
+    <input id="chatInput" class="flex-1 bg-transparent px-2 py-1.5 text-xs focus:outline-none" placeholder="اكتب سؤالك أو اضغط المايك وتحدث…">
+    <button id="sendBtn" class="btn px-4 py-2 rounded-lg text-[10px] font-bold text-white bg-blue-600">إرسال</button>
+  </div>
+</section>
 
-    // ============= SUPPORT MODAL =============
-    function openSupportModal() {
-        document.getElementById('supportModal').classList.remove('hidden');
-        document.body.style.overflow = 'hidden';
-        lucide.createIcons();
-    }
-    function closeSupportModal() {
-        document.getElementById('supportModal').classList.add('hidden');
-        document.body.style.overflow = '';
-    }
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closeSupportModal();
-    });
+<!-- الاختبارات -->
+<section id="view-quiz" class="view flex-col gap-2 h-full overflow-y-auto">
+  <h2 class="font-black text-sm text-pink-300 flex items-center gap-2"><i data-lucide="brain-circuit" class="w-4 h-4"></i>مولد الاختبارات والبطاقات</h2>
+  <div class="grid grid-cols-2 gap-2">
+    <select id="quizTopic" class="bg-gray-800 text-xs p-2 rounded-lg border border-gray-700"><option value="math">رياضيات</option><option value="physics">فيزياء</option><option value="history">تاريخ</option><option value="science">علوم</option><option value="prog">برمجة</option></select>
+    <select id="quizCount" class="bg-gray-800 text-xs p-2 rounded-lg border border-gray-700"><option value="4">4 أسئلة</option><option value="6">6 أسئلة</option></select>
+  </div>
+  <div class="grid grid-cols-2 gap-2">
+    <button id="genQuizBtn" class="btn px-3 py-2 rounded-lg text-[10px] font-bold text-white bg-pink-600 flex items-center justify-center gap-1"><i data-lucide="wand-2" class="w-3.5 h-3.5"></i>توليد اختبار</button>
+    <button id="genCardsBtn" class="btn px-3 py-2 rounded-lg text-[10px] font-bold text-amber-300 flex items-center justify-center gap-1"><i data-lucide="layers" class="w-3.5 h-3.5"></i>بطاقات</button>
+  </div>
+  <div id="quizBox" class="flex flex-col gap-2"></div>
+</section>
 
-    function trackSupportClick(e) {
-        showToast('📱 جاري فتح محادثة الدعم الفني...', 'info');
-    }
+<!-- PDF -->
+<section id="view-pdf" class="view flex-col gap-2 h-full overflow-y-auto">
+  <h2 class="font-black text-sm text-blue-300 flex items-center gap-2"><i data-lucide="file-text" class="w-4 h-4"></i>تحليل وملخصات PDF</h2>
+  <label class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-700 rounded-xl p-6 hover:border-blue-500/60 hover:bg-blue-900/10 cursor-pointer transition">
+    <i data-lucide="upload-cloud" class="w-9 h-9 text-blue-400"></i>
+    <p class="text-xs font-bold text-gray-300">ارفع ملف PDF للاستخراج والتحليل</p>
+    <input type="file" id="pdfInput" accept=".pdf" class="hidden">
+  </label>
+  <div id="pdfOut" class="hidden flex flex-col gap-2">
+    <div class="card p-2.5 rounded-lg grid grid-cols-3 gap-2 text-[10px]"><div>الملف: <b id="pdfName" class="text-white">-</b></div><div>الصفحات: <b id="pdfPages" class="text-white">-</b></div><div>الكلمات: <b id="pdfWords" class="text-white">-</b></div></div>
+    <div class="card p-2.5 rounded-lg"><h4 class="text-[10px] font-bold text-emerald-300 mb-1">✨ الملخص</h4><p id="pdfSummary" class="text-[11px] text-gray-300 leading-relaxed">-</p></div>
+    <div class="card p-2.5 rounded-lg"><h4 class="text-[10px] font-bold text-purple-300 mb-1">🔑 الكلمات المفتاحية</h4><div id="pdfKeys" class="flex flex-wrap gap-1"></div></div>
+    <button id="pdfQuizBtn" class="btn px-3 py-2 rounded-lg text-[10px] font-bold text-amber-300 w-fit flex items-center gap-1"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i>ولّد اختباراً من الملف</button>
+    <div id="pdfQuiz" class="flex flex-col gap-2"></div>
+    <div class="card p-2.5 rounded-lg"><h4 class="text-[10px] font-bold text-gray-400 mb-1">النص المستخرج</h4><div id="pdfText" class="text-[10px] text-gray-500 max-h-32 overflow-y-auto"></div></div>
+  </div>
+</section>
 
-    // ============= STORAGE =============
-    function saveState() {
-        localStorage.setItem('ai_academy_v3', JSON.stringify(AppState));
-    }
-    function loadState() {
-        const saved = localStorage.getItem('ai_academy_v3');
-        if (saved) {
-            Object.assign(AppState, JSON.parse(saved));
-        }
-    }
+<!-- الماسح -->
+<section id="view-scan" class="view flex-col gap-2 h-full overflow-y-auto items-center">
+  <h2 class="font-black text-sm text-rose-300 flex items-center gap-2 self-start"><i data-lucide="camera" class="w-4 h-4"></i>الماسح البصري</h2>
+  <div class="w-full max-w-md aspect-video bg-black rounded-xl overflow-hidden border border-gray-800 flex items-center justify-center">
+    <div id="camPh" class="text-center"><i data-lucide="camera-off" class="w-10 h-10 text-gray-600 mx-auto mb-1"></i><p class="text-[10px] text-gray-500">الكاميرا متوقفة</p></div>
+    <video id="camVideo" autoplay playsinline class="hidden w-full h-full object-cover"></video>
+  </div>
+  <div class="flex gap-2">
+    <button id="camStart" class="btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-emerald-300">تشغيل</button>
+    <button id="camSnap" class="btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-blue-300">التقاط 📸</button>
+    <button id="camStop" class="btn px-3 py-1.5 rounded-lg text-[10px] font-bold text-rose-300">إيقاف</button>
+  </div>
+  <img id="camShot" class="hidden max-w-md w-full rounded-xl border border-emerald-500/40">
+  <canvas id="camCanvas" class="hidden"></canvas>
+  <p class="text-[9px] text-gray-500">التقط صورة سؤالك ثم اكتبه للمساعد الصوتي ليشرحه لك</p>
+</section>
 
-    // ============= UI UPDATES =============
-    function updateUI() {
-        document.getElementById('xpValue').textContent = AppState.xp.toLocaleString('en-US');
-        document.getElementById('userLevel').textContent = AppState.level;
-        document.getElementById('streakDays').textContent = AppState.streak;
-        document.getElementById('comboCount').textContent = 'x' + AppState.currentCombo;
-        
-        const xpForNextLevel = AppState.level * 500;
-        const xpInLevel = AppState.xp - (AppState.level - 1) * 500;
-        const progress = Math.min(100, (xpInLevel / xpForNextLevel) * 100);
-        document.getElementById('levelBar').style.width = progress + '%';
-        document.getElementById('xpToNext').textContent = `${xpInLevel}/${xpForNextLevel}`;
-        
-        const accuracy = AppState.totalAnswers > 0 ? Math.round((AppState.correctAnswers / AppState.totalAnswers) * 100) : 0;
-        document.getElementById('miniGames').textContent = AppState.gamesPlayed;
-        document.getElementById('miniAccuracy').textContent = accuracy + '%';
-        
-        document.getElementById('dashXP').textContent = AppState.xp.toLocaleString('en-US');
-        document.getElementById('dashGames').textContent = AppState.gamesPlayed;
-        document.getElementById('dashBestCombo').textContent = AppState.bestCombo + 'x';
-        document.getElementById('dashBadges').textContent = AppState.achievements.length;
-        
-        document.getElementById('statTotalXP').textContent = AppState.xp.toLocaleString('en-US') + ' XP';
-        document.getElementById('statGamesWon').textContent = AppState.gamesPlayed + ' تحدي';
-        document.getElementById('statAccuracy').textContent = accuracy + '%';
-        document.getElementById('lbUserXP').textContent = AppState.xp.toLocaleString('en-US') + ' XP';
-        
-        document.getElementById('dailyProgress').style.width = Math.min(100, (AppState.dailyGames / 3) * 100) + '%';
-        document.getElementById('dailyProgressText').textContent = `${Math.min(3, AppState.dailyGames)}/3`;
-        
-        document.getElementById('badgeCount').textContent = AppState.achievements.length;
-        
-        saveState();
-        checkAchievements();
-    }
+<!-- التصنيف -->
+<section id="view-board" class="view flex-col gap-2 h-full overflow-y-auto">
+  <div class="bg-gradient-to-l from-purple-900/40 to-blue-900/30 p-2.5 rounded-xl border border-purple-500/30 flex items-center justify-between gap-2 flex-wrap">
+    <div class="flex items-center gap-2"><i data-lucide="user-check" class="w-5 h-5 text-purple-300"></i><div><h3 class="font-bold text-xs text-purple-200">الخصوصية والهوية</h3><p class="text-[9px] text-gray-400">شارك باسم رمزي أو اختفِ تماماً</p></div></div>
+    <div class="flex items-center gap-2">
+      <label class="flex items-center gap-1.5 bg-gray-900/80 p-1.5 rounded-lg text-[9px]">الظهور
+        <input type="checkbox" id="toggleLb" checked class="accent-purple-500 w-3.5 h-3.5">
+      </label>
+      <select id="avatarSelect" class="bg-gray-800 text-[9px] text-purple-300 font-bold px-2 py-1 rounded-lg border border-purple-500/40">
+        <option>الفيزيائي المجهول ⚛️</option><option>المحقق التاريخي 📜</option><option>عبقري الخوارزميات 💻</option><option>مكتشف المجرات 🌌</option><option>الفيلسوف الغامض 🧠</option>
+      </select>
+    </div>
+  </div>
+  <div class="grid grid-cols-3 gap-2">
+    <div class="card p-2 rounded-lg"><p class="text-[9px] text-gray-400">نقاطك</p><b id="statXP" class="text-sm text-blue-400">0</b></div>
+    <div class="card p-2 rounded-lg"><p class="text-[9px] text-gray-400">صحيحة</p><b id="statGames" class="text-sm text-emerald-400">0</b></div>
+    <div class="card p-2 rounded-lg"><p class="text-[9px] text-gray-400">الدقة</p><b id="statAcc" class="text-sm text-amber-400">0%</b></div>
+  </div>
+  <div class="space-y-1.5">
+    <div class="flex justify-between items-center bg-amber-500/10 border border-amber-500/30 p-2 rounded-lg"><div class="flex items-center gap-2"><span>🥇</span><div><b class="text-[10px] text-amber-200">الراحل عبر الزمن ⏳</b><p class="text-[8px] text-amber-400/70">أسطورة الأكاديمية</p></div></div><b class="text-[10px] text-amber-300">3,450 XP</b></div>
+    <div class="flex justify-between items-center bg-gray-800/60 p-2 rounded-lg"><div class="flex items-center gap-2"><span>🥈</span><div><b class="text-[10px] text-gray-200">صانع المعادلات 🧮</b><p class="text-[8px] text-gray-400">عبقري الحساب</p></div></div><b class="text-[10px] text-gray-300">2,980 XP</b></div>
+    <div id="userCard" class="flex justify-between items-center bg-blue-600/20 border border-blue-500/50 p-2 rounded-lg"><div class="flex items-center gap-2"><span class="text-[10px] font-black text-blue-400">#3</span><div><b id="userDisplayName" class="text-[10px] text-blue-200">الفيزيائي المجهول ⚛️ (أنت)</b><p class="text-[8px] text-blue-300">باحث متميز</p></div></div><b id="lbUserXP" class="text-[10px] text-blue-300">0 XP</b></div>
+    <div id="hiddenBanner" class="hidden p-4 text-center bg-gray-950 rounded-lg border border-dashed border-gray-800"><i data-lucide="eye-off" class="w-6 h-6 text-gray-600 mx-auto mb-1"></i><p class="text-[10px] text-gray-400">وضع الخصوصية مفعّل — نقاطك محلية فقط</p></div>
+    <div class="flex justify-between items-center bg-gray-900/50 p-2 rounded-lg"><div class="flex items-center gap-2"><span class="text-[10px] text-gray-500">#4</span><div><b class="text-[10px] text-gray-300">فارس المنطق 🛡️</b><p class="text-[8px] text-gray-500">محلل فلسفي</p></div></div><b class="text-[10px] text-gray-400">950 XP</b></div>
+  </div>
+</section>
 
-    function addXP(amount, event) {
-        AppState.xp += amount;
-        AppState.gamesPlayed++;
-        AppState.dailyGames++;
-        AppState.correctAnswers++;
-        AppState.totalAnswers++;
-        AppState.currentCombo++;
-        if (AppState.currentCombo > AppState.bestCombo) AppState.bestCombo = AppState.currentCombo;
-        
-        if (AppState.xp >= AppState.level * 500) {
-            AppState.level++;
-            showToast(`🎉 مبروك! وصلت للمستوى ${AppState.level}`, 'success');
-            triggerConfetti();
-        }
-        
-        if (event) {
-            const floatEl = document.createElement('div');
-            floatEl.className = 'xp-float';
-            floatEl.textContent = `+${amount} XP`;
-            floatEl.style.left = event.clientX + 'px';
-            floatEl.style.top = event.clientY + 'px';
-            document.body.appendChild(floatEl);
-            setTimeout(() => floatEl.remove(), 1500);
-        }
-        
-        addActivity(`+${amount} XP`);
-        updateUI();
-    }
+<!-- الإنجازات -->
+<section id="view-badges" class="view flex-col gap-2 h-full overflow-y-auto">
+  <h2 class="font-black text-sm text-yellow-300 flex items-center gap-2"><i data-lucide="medal" class="w-4 h-4"></i>الإنجازات — تُفتح بالأداء الحقيقي فقط</h2>
+  <div id="badgeGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2"></div>
+</section>
 
-    function breakCombo() {
-        AppState.currentCombo = 0;
-        AppState.totalAnswers++;
-        updateUI();
-    }
+</main>
+</div>
+</div>
 
-    function addActivity(text) {
-        const time = new Date().toLocaleTimeString('ar-EG', { hour: '2-digit', minute: '2-digit' });
-        AppState.activities.unshift({ text, time });
-        if (AppState.activities.length > 20) AppState.activities.pop();
-        const feed = document.getElementById('activityFeed');
-        if (AppState.activities.length === 1) feed.innerHTML = '';
-        const el = document.createElement('div');
-        el.className = 'flex items-center justify-between bg-gray-800/50 p-2 rounded-lg';
-        el.innerHTML = `<span class="text-gray-300">${text}</span><span class="text-gray-500">${time}</span>`;
-        feed.prepend(el);
-    }
+<!-- نافذة الدعم -->
+<div id="supportModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur z-[998] flex items-center justify-center">
+  <div class="panel rounded-2xl p-5 max-w-sm w-[90%] border-cyan-500/40">
+    <div class="flex items-center gap-3 mb-3">
+      <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center font-black text-xl">م</div>
+      <div><h3 class="font-black text-sm text-cyan-200">الدعم الفني المباشر</h3><p class="text-[10px] text-cyan-300 font-bold">@m3v30 • متصل 24/7</p></div>
+    </div>
+    <p class="text-[11px] text-gray-400 mb-4">لأي مشكلة تقنية أو استفسار تواصل معنا مباشرة عبر تلغرام.</p>
+    <a href="https://t.me/m3v30" target="_blank" rel="noopener" class="tg-btn w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold text-white">فتح محادثة تلغرام 📨</a>
+    <button onclick="document.getElementById('supportModal').classList.add('hidden')" class="w-full mt-2 text-[10px] text-gray-500 hover:text-white">إغلاق</button>
+  </div>
+</div>
+<button onclick="document.getElementById('supportModal').classList.remove('hidden')" class="fixed bottom-5 left-5 z-[500] w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-xl shadow-cyan-500/40 call-av" title="الدعم الفني">
+  <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+</button>
 
-    function showToast(message, type = 'info') {
-        const container = document.getElementById('toastContainer');
-        const colors = {
-            info: 'border-blue-500 bg-blue-900/90',
-            success: 'border-emerald-500 bg-emerald-900/90',
-            error: 'border-rose-500 bg-rose-900/90',
-            warning: 'border-amber-500 bg-amber-900/90'
-        };
-        const toast = document.createElement('div');
-        toast.className = `toast px-4 py-2 rounded-xl border-2 backdrop-blur text-xs font-bold text-white ${colors[type]}`;
-        toast.textContent = message;
-        container.appendChild(toast);
-        setTimeout(() => {
-            toast.style.transition = 'opacity 0.3s';
-            toast.style.opacity = '0';
-            setTimeout(() => toast.remove(), 300);
-        }, 3000);
-    }
+<!-- شاشة الاتصال الصوتي -->
+<div id="callOverlay" class="hidden fixed inset-0 bg-black/90 backdrop-blur z-[997] flex flex-col items-center justify-center gap-4">
+  <div class="w-28 h-28 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center call-av"><i data-lucide="bot" class="w-14 h-14 text-white"></i></div>
+  <h3 class="font-black text-lg text-white">الروبوت الذكي</h3>
+  <p id="callStatus" class="text-xs text-emerald-300">جارٍ الاتصال…</p>
+  <div id="callWave" class="wave hidden"><i></i><i></i><i></i><i></i><i></i></div>
+  <p id="callText" class="text-xs text-gray-300 max-w-xs text-center min-h-[20px] px-4"></p>
+  <button id="endCallBtn" class="bg-rose-600 hover:bg-rose-700 px-6 py-2.5 rounded-full text-sm font-bold text-white flex items-center gap-2"><i data-lucide="phone-off" class="w-4 h-4"></i>إنهاء المكالمة</button>
+</div>
 
-    function triggerConfetti() {
-        if (window.confetti) {
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-        }
-    }
+<script>
+/* ================= الأدوات ================= */
+const $=id=>document.getElementById(id);
+const shuffle=a=>[...a].sort(()=>Math.random()-.5);
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const norm=s=>(s||'').replace(/[\u064B-\u0652]/g,'').replace(/[أإآ]/g,'ا').replace(/ة/g,'ه').replace(/ى/g,'ي').trim();
+const store={get:k=>{try{return localStorage.getItem(k)}catch(e){return null}},set:(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}}};
 
-    function playSound(type) {
-        if (!AppState.soundEnabled) return;
-        try {
-            const ctx = new (window.AudioContext || window.webkitAudioContext)();
-            const osc = ctx.createOscillator();
-            const gain = ctx.createGain();
-            osc.connect(gain); gain.connect(ctx.destination);
-            gain.gain.setValueAtTime(0.1, ctx.currentTime);
-            
-            const sounds = { correct: [880, 1100], wrong: [300, 200], levelup: [523, 659, 784, 1047], click: [600] };
-            const freqs = sounds[type] || [440];
-            freqs.forEach((f, i) => {
-                osc.frequency.setValueAtTime(f, ctx.currentTime + i * 0.08);
-            });
-            gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.3);
-            osc.start();
-            osc.stop(ctx.currentTime + 0.3);
-        } catch(e) {}
-    }
+let S={xp:0,level:1,correct:0,total:0,combo:0,bestCombo:0,streak:1,avatar:'الفيزيائي المجهول ⚛️',visible:true,badges:[],acts:[],daily:0,dailyDate:'',perfect:0,voice:0,pdfDone:0,quizPerfect:0,sound:true};
+(function load(){const d=store.get('acad4');if(d)Object.assign(S,JSON.parse(d));
+const today=new Date().toDateString();
+const last=store.get('acad4_day');
+if(last){const y=new Date(Date.now()-864e5).toDateString();if(last===y)S.streak++;else if(last!==today)S.streak=1;}
+store.set('acad4_day',today);
+if(S.dailyDate!==today){S.daily=0;S.dailyDate=today;}
+})();
+const save=()=>store.set('acad4',JSON.stringify(S));
 
-    function toggleSound() {
-        AppState.soundEnabled = !AppState.soundEnabled;
-        const icon = document.querySelector('#soundToggle i');
-        icon.setAttribute('data-lucide', AppState.soundEnabled ? 'volume-2' : 'volume-x');
-        lucide.createIcons();
-        saveState();
-    }
+function toast(m,t='info'){const c={info:'border-blue-500 bg-blue-900/90',success:'border-emerald-500 bg-emerald-900/90',error:'border-rose-500 bg-rose-900/90',warn:'border-amber-500 bg-amber-900/90'}[t];
+const d=document.createElement('div');d.className=`toast px-3 py-2 rounded-lg border-2 text-[11px] font-bold text-white ${c}`;d.textContent=m;$('toastBox').appendChild(d);
+setTimeout(()=>{d.style.opacity='0';d.style.transition='.3s';setTimeout(()=>d.remove(),300)},2800);}
 
-    function checkAchievements() {
-        ACHIEVEMENTS.forEach(a => {
-            if (!AppState.achievements.includes(a.id) && a.condition(AppState)) {
-                AppState.achievements.push(a.id);
-                showToast(`🏅 إنجاز جديد: ${a.icon} ${a.title}`, 'success');
-                playSound('levelup');
-                triggerConfetti();
-            }
-        });
-        renderAchievements();
-    }
+function sound(t){if(!S.sound)return;try{const c=new (window.AudioContext||window.webkitAudioContext)();const o=c.createOscillator(),g=c.createGain();o.connect(g);g.connect(c.destination);g.gain.setValueAtTime(.08,c.currentTime);
+({ok:[880,1100],no:[300,200],up:[523,659,784,1047],ck:[600]})[t].forEach((f,i)=>o.frequency.setValueAtTime(f,c.currentTime+i*.08));
+g.gain.exponentialRampToValueAtTime(.01,c.currentTime+.3);o.start();o.stop(c.currentTime+.3);}catch(e){}}
 
-    function renderAchievements() {
-        const grid = document.getElementById('achievementsGrid');
-        if (!grid) return;
-        grid.innerHTML = '';
-        ACHIEVEMENTS.forEach(a => {
-            const unlocked = AppState.achievements.includes(a.id);
-            const div = document.createElement('div');
-            div.className = `glass-card p-3 rounded-xl border-2 ${unlocked ? 'border-yellow-500/50 achievement-badge' : 'border-gray-800 opacity-60'}`;
-            div.innerHTML = `
-                <div class="text-2xl mb-1">${unlocked ? a.icon : '🔒'}</div>
-                <h4 class="font-black text-xs ${unlocked ? 'text-yellow-300' : 'text-gray-400'}">${a.title}</h4>
-                <p class="text-[10px] text-gray-400 mt-1">${a.desc}</p>
-            `;
-            grid.appendChild(div);
-        });
-    }
+function floatXP(n,ev){if(!ev)return;const d=document.createElement('div');d.className='xp-float';d.textContent='+'+n+' XP';d.style.left=ev.clientX+'px';d.style.top=ev.clientY+'px';document.body.appendChild(d);setTimeout(()=>d.remove(),1400);}
+const confetti=()=>window.confetti&&confetti({particleCount:90,spread:70,origin:{y:.6}});
 
-    function switchTab(tabName) {
-        document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-        const tab = document.getElementById('tab-' + tabName);
-        if (tab) tab.classList.remove('hidden');
-        playSound('click');
-    }
+function record(ok){S.total++;if(ok){S.correct++;S.combo++;if(S.combo>S.bestCombo)S.bestCombo=S.combo;}else S.combo=0;}
+function addXP(n,ev){S.xp+=n;floatXP(n,ev);
+if(S.xp>=S.level*500){S.level++;toast('🎉 وصلت للمستوى '+S.level,'success');sound('up');confetti();}
+const today=new Date().toDateString();
+if(S.dailyDate!==today){S.daily=0;S.dailyDate=today;}
+S.daily++;
+if(S.daily===3){S.xp+=200;toast('☀️ أكملت تحدي اليوم! +200 XP','success');confetti();}
+act('+'+n+' XP');updateUI();}
+function act(t){S.acts.unshift({t,h:new Date().toLocaleTimeString('ar-EG',{hour:'2-digit',minute:'2-digit'})});if(S.acts.length>15)S.acts.pop();
+$('actFeed').innerHTML=S.acts.map(a=>`<div class="flex justify-between bg-gray-800/50 p-1.5 rounded"><span class="text-gray-300">${a.t}</span><span class="text-gray-500">${a.h}</span></div>`).join('');}
 
-    function changeUserAvatar(avatar) {
-        AppState.avatar = avatar;
-        const el = document.getElementById('userDisplayName');
-        if (el) el.innerHTML = `${avatar} <span class="bg-blue-500 text-[8px] text-white px-1 rounded">أنت</span>`;
-        saveState();
-    }
+/* ================= الإنجازات ================= */
+const BADGES=[
+{id:'c1',i:'🎯',t:'أول إصابة',d:'إجابة صحيحة واحدة',c:()=>S.correct>=1},
+{id:'c25',i:'🧠',t:'عقل حاد',d:'25 إجابة صحيحة',c:()=>S.correct>=25},
+{id:'c100',i:'⚡',t:'آلة الإجابات',d:'100 إجابة صحيحة',c:()=>S.correct>=100},
+{id:'x5',i:'🔥',t:'سلسلة نارية',d:'كومبو x5',c:()=>S.bestCombo>=5},
+{id:'x10',i:'💥',t:'انفجار ذكاء',d:'كومبو x10',c:()=>S.bestCombo>=10},
+{id:'k1',i:'💎',t:'جامع النقاط',d:'1000 XP',c:()=>S.xp>=1000},
+{id:'k5',i:'👑',t:'الخبير',d:'5000 XP',c:()=>S.xp>=5000},
+{id:'a90',i:'🎪',t:'قنّاص',d:'دقة 90% (10 محاولات+)',c:()=>S.total>=10&&S.correct/S.total>=.9},
+{id:'pf',i:'🏅',t:'العلامة الكاملة',d:'جولة مثالية 100%',c:()=>S.perfect>=1},
+{id:'vc',i:'🎙️',t:'متحدث بارع',d:'تحدث مع الروبوت صوتياً',c:()=>S.voice>=1},
+{id:'pd',i:'📄',t:'محلل وثائق',d:'حلّل ملف PDF',c:()=>S.pdfDone>=1},
+{id:'qz',i:'📝',t:'الممتحِن',d:'اختبار مولّد بعلامة كاملة',c:()=>S.quizPerfect>=1},
+{id:'l5',i:'🚀',t:'انطلاقة',d:'المستوى 5',c:()=>S.level>=5},
+{id:'d3',i:'☀️',t:'بطل اليوم',d:'تحدي اليوم',c:()=>S.daily>=3},
+];
+function checkBadges(){BADGES.forEach(b=>{if(!S.badges.includes(b.id)&&b.c()){S.badges.push(b.id);toast('🏅 إنجاز: '+b.i+' '+b.t,'success');sound('up');confetti();}});renderBadges();}
+function renderBadges(){$('badgeGrid').innerHTML=BADGES.map(b=>{const u=S.badges.includes(b.id);
+return `<div class="card p-3 rounded-xl border-2 ${u?'border-yellow-500/50':'border-gray-800 opacity-50'}"><div class="text-2xl mb-1">${u?b.i:'🔒'}</div><b class="text-[10px] ${u?'text-yellow-300':'text-gray-400'}">${b.t}</b><p class="text-[9px] text-gray-400 mt-0.5">${b.d}</p></div>`;}).join('');}
 
-    function toggleLeaderboardVisibility(enabled) {
-        AppState.visibleInLeaderboard = enabled;
-        document.getElementById('currentUserRankCard').classList.toggle('hidden', !enabled);
-        document.getElementById('disabledLbBanner').classList.toggle('hidden', enabled);
-        document.getElementById('statVisibility').textContent = enabled ? 'ظاهر' : 'مخفي';
-        document.getElementById('statVisibility').className = `text-[10px] font-bold mt-1 ${enabled ? 'text-emerald-400' : 'text-rose-400'}`;
-        saveState();
-    }
+/* ================= الواجهة ================= */
+function updateUI(){$('xpValue').textContent=S.xp.toLocaleString('en-US');$('userLevel').textContent=S.level;
+$('streakDays').textContent=S.streak;$('comboCount').textContent='x'+S.combo;
+const need=S.level*500,cur=S.xp-(S.level-1)*500;
+$('levelBar').style.width=Math.min(100,cur/need*100)+'%';$('xpToNext').textContent=cur+'/'+need;
+const acc=S.total?Math.round(S.correct/S.total*100):0;
+$('hXP').textContent=S.xp.toLocaleString('en-US');$('hCorrect').textContent=S.correct;$('hAcc').textContent=acc+'%';$('hCombo').textContent='x'+S.bestCombo;$('hBadges').textContent=S.badges.length;
+$('statXP').textContent=S.xp.toLocaleString('en-US');$('statGames').textContent=S.correct;$('statAcc').textContent=acc+'%';
+$('lbUserXP').textContent=S.xp.toLocaleString('en-US')+' XP';
+$('dailyBar').style.width=Math.min(100,S.daily/3*100)+'%';$('dailyTxt').textContent=Math.min(3,S.daily)+'/3';
+save();checkBadges();}
 
-    function showArena(title) {
-        document.getElementById('arenaTitle').textContent = title;
-        const arena = document.getElementById('gameArena');
-        arena.classList.remove('hidden');
-        arena.classList.add('flex');
-        document.getElementById('arenaFeedback').classList.add('hidden');
-        clearGameTimer();
-    }
-    function closeGameArena() {
-        document.getElementById('gameArena').classList.add('hidden');
-        document.getElementById('gameArena').classList.remove('flex');
-        clearGameTimer();
-    }
-    function clearGameTimer() {
-        if (AppState.gameTimer) { clearInterval(AppState.gameTimer); AppState.gameTimer = null; }
-        const el = document.getElementById('gameTimer');
-        if (el) el.classList.add('hidden');
-    }
-    function showFeedback(message, type = 'success') {
-        const el = document.getElementById('arenaFeedback');
-        el.classList.remove('hidden');
-        el.textContent = message;
-        el.className = `text-xs font-bold p-2 rounded-lg text-center ${type === 'success' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-rose-500/20 text-rose-300 border border-rose-500/30'}`;
-        setTimeout(() => el.classList.add('hidden'), 2000);
-    }
+function switchView(v){document.querySelectorAll('.view').forEach(x=>x.classList.remove('on'));
+$('view-'+v).classList.add('on');
+document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.dataset.view===v));
+if(v!=='games')backToGames();sound('ck');}
+document.querySelectorAll('.nav-item').forEach(n=>n.onclick=()=>switchView(n.dataset.view));
 
-    // ============= GAMES =============
-    function startMathBlitz() {
-        showArena("🧮 الحساب الذهني السريع");
-        let score = 0, round = 0, maxRounds = 10;
-        
-        function nextQuestion() {
-            if (round >= maxRounds) {
-                const body = document.getElementById('arenaBody');
-                const baseXP = score * 15;
-                body.innerHTML = `
-                    <div class="text-center">
-                        <div class="text-4xl mb-2">🎉</div>
-                        <h3 class="font-black text-lg text-amber-300">انتهت الجولة!</h3>
-                        <p class="text-sm text-gray-300 mt-2">أجبت على ${score} من ${maxRounds}</p>
-                        <p class="text-xs text-amber-400 mt-1">+${baseXP} XP</p>
-                    </div>
-                `;
-                for (let i = 0; i < score; i++) setTimeout(() => addXP(15), i * 100);
-                return;
-            }
-            round++;
-            const ops = ['+', '-', '×'];
-            const op = ops[Math.floor(Math.random() * ops.length)];
-            let a, b, ans;
-            const difficulty = Math.min(20 + round * 3, 50);
-            if (op === '+') { a = Math.floor(Math.random() * difficulty) + 5; b = Math.floor(Math.random() * difficulty) + 5; ans = a + b; }
-            else if (op === '-') { a = Math.floor(Math.random() * difficulty) + 10; b = Math.floor(Math.random() * a); ans = a - b; }
-            else { a = Math.floor(Math.random() * 12) + 2; b = Math.floor(Math.random() * 12) + 2; ans = a * b; }
-            
-            const body = document.getElementById('arenaBody');
-            body.innerHTML = `
-                <p class="text-[10px] text-gray-400">السؤال ${round}/${maxRounds} | النقاط: <span class="text-amber-400 font-black">${score}</span></p>
-                <div class="text-3xl font-black text-amber-300 my-2">${a} ${op} ${b} = ؟</div>
-                <div class="flex gap-2 w-full max-w-sm">
-                    <input type="number" id="mathAns" placeholder="؟" class="flex-1 bg-gray-900 border border-gray-700 px-3 py-2 rounded-lg text-sm text-center text-white focus:border-amber-500 focus:outline-none">
-                    <button id="mathSubmit" class="glass-button px-4 py-2 rounded-lg text-xs font-bold text-white bg-amber-600">إجابة</button>
-                </div>
-            `;
-            document.getElementById('mathAns').focus();
-            document.getElementById('mathSubmit').onclick = () => {
-                const val = parseInt(document.getElementById('mathAns').value);
-                if (val === ans) {
-                    score++;
-                    playSound('correct');
-                    showFeedback('✓ إجابة صحيحة!', 'success');
-                    nextQuestion();
-                } else {
-                    playSound('wrong');
-                    showFeedback(`✗ خطأ! الإجابة: ${ans}`, 'error');
-                    breakCombo();
-                    nextQuestion();
-                }
-            };
-            document.getElementById('mathAns').addEventListener('keypress', e => {
-                if (e.key === 'Enter') document.getElementById('mathSubmit').click();
-            });
-        }
-        nextQuestion();
-    }
+$('soundToggle').onclick=()=>{S.sound=!S.sound;$('soundToggle').innerHTML=`<i data-lucide="${S.sound?'volume-2':'volume-x'}" class="w-4 h-4 text-cyan-300"></i>`;lucide.createIcons();save();};
+$('resetBtn').onclick=()=>{if(confirm('تصفير كل التقدم؟')){localStorage.removeItem('acad4');location.reload();}};
+$('toggleLb').onchange=e=>{S.visible=e.target.checked;$('userCard').classList.toggle('hidden',!S.visible);$('hiddenBanner').classList.toggle('hidden',S.visible);save();};
+$('avatarSelect').onchange=e=>{S.avatar=e.target.value;$('userDisplayName').textContent=S.avatar+' (أنت)';save();};
 
-    const historyRiddles = [
-        { q: "عاصمة على نهر الدجلة، بُنيت في العهد العباسي وكانت مركز دار الحكمة قبل غزو 1258م", a: "بغداد", opts: ["بغداد", "دمشق", "القاهرة", "قرطبة"] },
-        { q: "قائد مسلم فتح الأندلس عام 711م وأحرق السفن", a: "طارق بن زياد", opts: ["طارق بن زياد", "خالد بن الوليد", "صلاح الدين", "عمرو بن العاص"] },
-        { q: "عالم مسلم يُعتبر أب الجبر، ألف كتاب 'الجبر والمقابلة'", a: "الخوارزمي", opts: ["الخوارزمي", "ابن سينا", "ابن الهيثم", "الرازي"] },
-    ];
-    function startHistoryRiddles() {
-        showArena("📜 الآلة الزمنية");
-        let idx = 0, score = 0;
-        function showQ() {
-            if (idx >= historyRiddles.length) {
-                const xp = score * 25;
-                document.getElementById('arenaBody').innerHTML = `
-                    <div class="text-center">
-                        <div class="text-4xl mb-2">📜</div>
-                        <h3 class="font-black text-lg text-purple-300">أحسنت! ${score}/${historyRiddles.length}</h3>
-                        <p class="text-xs text-amber-400 mt-2">+${xp} XP</p>
-                    </div>
-                `;
-                for (let i = 0; i < score; i++) setTimeout(() => addXP(25), i * 100);
-                return;
-            }
-            const r = historyRiddles[idx];
-            const shuffled = [...r.opts].sort(() => Math.random() - 0.5);
-            document.getElementById('arenaBody').innerHTML = `
-                <p class="text-[10px] text-gray-400">السؤال ${idx + 1}/${historyRiddles.length}</p>
-                <p class="text-sm text-gray-200 leading-relaxed max-w-md mb-3">"${r.q}"</p>
-                <div class="grid grid-cols-2 gap-2 w-full max-w-sm">
-                    ${shuffled.map(opt => `<button class="bg-gray-900 hover:bg-purple-900/40 p-2 rounded-lg border border-gray-700 text-xs text-white transition">${opt}</button>`).join('')}
-                </div>
-            `;
-            document.querySelectorAll('#arenaBody button').forEach(btn => {
-                btn.onclick = () => {
-                    if (btn.textContent === r.a) {
-                        score++; playSound('correct');
-                        showFeedback('✓ إجابة صحيحة!', 'success');
-                    } else {
-                        playSound('wrong'); breakCombo();
-                        showFeedback(`✗ الإجابة: ${r.a}`, 'error');
-                    }
-                    idx++;
-                    setTimeout(showQ, 800);
-                };
-            });
-        }
-        showQ();
-    }
+/* ================= محرك الألعاب ================= */
+let GS={score:0,total:0,xp:0},gTimer=null;
+const GAMES=[
+{id:1,n:'الحساب الذهني',ic:'calculator',cl:'amber',xp:20,d:'معادلات سريعة بمؤقت'},
+{id:2,n:'الآلة الزمنية',ic:'scroll',cl:'purple',xp:25,d:'ألغاز تاريخية'},
+{id:3,n:'الخط الزمني',ic:'hourglass',cl:'blue',xp:15,d:'رتّب الأحداث بالنقر'},
+{id:4,n:'المغالطات',ic:'shield-alert',cl:'emerald',xp:30,d:'اكتشف خطأ الحجة'},
+{id:5,n:'تحدي الفيزياء',ic:'atom',cl:'cyan',xp:20,d:'ألغاز مفاهيمية'},
+{id:6,n:'الذاكرة العلمية',ic:'brain',cl:'pink',xp:10,d:'طابق البطاقات'},
+{id:7,n:'متاهة البرمجة',ic:'code-2',cl:'indigo',xp:25,d:'تتبع ناتج الكود'},
+{id:8,n:'فك المصطلحات',ic:'binary',cl:'rose',xp:20,d:'ركّب الحروف'},
+{id:9,n:'صنّف المفاهيم',ic:'layers',cl:'yellow',xp:15,d:'فرز سريع'},
+{id:10,n:'خمّن الشخصية',ic:'help-circle',cl:'teal',xp:90,d:'تلميحات وتخمين'},
+{id:11,n:'التحدي الشامل IQ',ic:'sparkles',cl:'red',xp:30,d:'خليط صعب'},
+];
+$('gamesList').innerHTML=GAMES.map(g=>`<div data-g="${g.id}" class="card p-3 rounded-xl cursor-pointer border-r-4 border-${g.cl}-400"><div class="flex items-center gap-2 mb-1"><i data-lucide="${g.ic}" class="w-4 h-4 text-${g.cl}-400"></i><b class="text-[11px]">${g.id}. ${g.n}</b></div><p class="text-[9px] text-gray-400">${g.d}</p><p class="text-[9px] text-${g.cl}-500 mt-1">+${g.xp} XP لكل إجابة صحيحة</p></div>`).join('');
+$('gamesList').onclick=e=>{const c=e.target.closest('[data-g]');if(c)openGame(+c.dataset.g);};
+function openRandomGame(){openGame(pick(GAMES).id);}
+function backToGames(){$('gameScreen').classList.add('hidden');$('gameScreen').classList.remove('flex');$('gamesGrid').classList.remove('hidden');if(gTimer)clearInterval(gTimer);}
+function openScreen(t){$('gamesGrid').classList.add('hidden');const s=$('gameScreen');s.classList.remove('hidden');s.classList.add('flex');$('gsTitle').textContent=t;GS={score:0,total:0,xp:0};$('gsScore').textContent='0';$('gsTimer').classList.add('hidden');if(gTimer)clearInterval(gTimer);}
+function gsWin(n,ev){GS.score++;GS.xp+=n;record(true);addXP(n,ev);sound('ok');$('gsScore').textContent=GS.score;}
+function gsLose(){record(false);sound('no');updateUI();}
+function gsEnd(){if(GS.total>1&&GS.score===GS.total){S.perfect++;confetti();}
+$('gsBody').innerHTML=`<div class="text-5xl mb-2">${GS.score===GS.total?'🏆':GS.score>=GS.total/2?'🎉':'💪'}</div><h3 class="font-black text-lg grad">النتيجة: ${GS.score}/${GS.total}</h3><p class="text-xs text-amber-400 mt-1 font-bold">ربحت ${GS.xp} XP حقيقية</p><button onclick="backToGames()" class="btn px-4 py-2 rounded-lg text-xs font-bold mt-3">العودة للألعاب</button>`;
+act(`🎮 جولة: ${GS.score}/${GS.total}`);updateUI();}
+function timer(sec,cb){$('gsTimer').classList.remove('hidden');let t=sec;$('gsTimer').textContent=t;gTimer=setInterval(()=>{t--;$('gsTimer').textContent=t;if(t<=0){clearInterval(gTimer);cb();}},1000);}
+function optsHTML(opts){return shuffle(opts).map(o=>`<button data-o="${o}" class="opt-btn bg-gray-900 hover:bg-gray-800 border border-gray-700 p-2 rounded-lg text-[11px] text-white">${o}</button>`).join('');}
+function bindOpts(container,onPick){container.querySelectorAll('.opt-btn').forEach(b=>b.onclick=ev=>{if(b.dataset.done)return;onPick(b,ev);});}
 
-    function startTimelineGame() { showArena("⏳ ترتيب الخط الزمني"); document.getElementById('arenaBody').innerHTML = `<button onclick="addXP(60); closeGameArena();" class="glass-button px-4 py-1.5 rounded-lg text-xs text-white bg-blue-600">إكمال (+60 XP)</button>`; }
-    function startFallacySpotter() { showArena("💡 كاشف المغالطات"); document.getElementById('arenaBody').innerHTML = `<button onclick="addXP(80); closeGameArena();" class="glass-button px-4 py-1.5 rounded-lg text-xs text-white bg-emerald-600">إكمال (+80 XP)</button>`; }
-    function startPhysicsBlitz() { showArena("⚛️ تحدي الفيزياء"); document.getElementById('arenaBody').innerHTML = `<button onclick="addXP(70); closeGameArena();" class="glass-button px-4 py-1.5 rounded-lg text-xs text-white bg-cyan-600">إكمال (+70 XP)</button>`; }
-    function startMemoryMatch() { showArena("🧠 الذاكرة العلمية"); document.getElementById('arenaBody').innerHTML = `<button onclick="addXP(90); closeGameArena();" class="glass-button px-4 py-1.5 rounded-lg text-xs text-white bg-pink-600">إكمال (+90 XP)</button>`; }
-    function startLogicMaze() { showArena("💻 متاهة البرمجة"); document.getElementById('arenaBody').innerHTML = `<button onclick="addXP(75); closeGameArena();" class="glass-button px-4 py-1.5 rounded-lg text-xs text-white bg-indigo-600">إكمال (+75 XP)</button>`; }
-    function startWordDecipher() { showArena("🔠 تفكيك المصطلحات"); document.getElementById('arenaBody').innerHTML = `<button onclick="addXP(60); closeGameArena();" class="glass-button px-4 py-1.5 rounded-lg text-xs text-white bg-rose-600">إكمال (+60 XP)</button>`; }
-    function startConceptClassifier() { showArena("🎯 تصنيف المفاهيم"); document.getElementById('arenaBody').innerHTML = `<button onclick="addXP(70); closeGameArena();" class="glass-button px-4 py-1.5 rounded-lg text-xs text-white bg-yellow-600">إكمال (+70 XP)</button>`; }
-    function startTwentyQuestions() { showArena("🔍 تخمين الشخصية"); document.getElementById('arenaBody').innerHTML = `<button onclick="addXP(85); closeGameArena();" class="glass-button px-4 py-1.5 rounded-lg text-xs text-white bg-teal-600">إكمال (+85 XP)</button>`; }
-    function startDailyBrainQuest() { showArena("🏆 التحدي الشامل"); document.getElementById('arenaBody').innerHTML = `<button onclick="addXP(150); closeGameArena();" class="glass-button px-4 py-1.5 rounded-lg text-xs text-white bg-red-600">إكمال (+150 XP)</button>`; }
+/* 1 حساب */
+function g1(){openScreen('🧮 الحساب الذهني');GS.total=8;let r=0;
+timer(60,()=>gsEnd());
+const next=()=>{if(r>=8)return gsEnd();r++;
+const op=pick(['+','-','×']);let a,b,ans;
+if(op==='+'){a=5+Math.floor(Math.random()*40);b=5+Math.floor(Math.random()*40);ans=a+b;}
+else if(op==='-'){a=10+Math.floor(Math.random()*50);b=Math.floor(Math.random()*a);ans=a-b;}
+else{a=2+Math.floor(Math.random()*11);b=2+Math.floor(Math.random()*11);ans=a*b;}
+$('gsBody').innerHTML=`<p class="text-[10px] text-gray-400">سؤال ${r}/8</p><div class="text-3xl font-black text-amber-300 my-2">${a} ${op} ${b} = ؟</div><div class="flex gap-2 w-full max-w-xs"><input id="ans" type="number" class="flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-center text-sm focus:border-amber-500 focus:outline-none"><button id="go" class="btn px-4 rounded-lg text-xs font-bold bg-amber-600 text-white">✓</button></div>`;
+$('ans').focus();
+const go=ev=>{const v=parseInt($('ans').value);if(v===ans)gsWin(20,ev);else gsLose();next();};
+$('go').onclick=go;$('ans').onkeypress=e=>{if(e.key==='Enter')go(e);};};next();}
 
-    function openRandomGame() {
-        const games = [startMathBlitz, startHistoryRiddles, startFallacySpotter, startPhysicsBlitz, startLogicMaze, startWordDecipher];
-        games[Math.floor(Math.random() * games.length)]();
-    }
+/* 2 تاريخ */
+const HIST=[{q:'عاصمة على الدجلة، مركز دار الحكمة قبل 1258م',a:'بغداد',o:['بغداد','دمشق','القاهرة','قرطبة']},{q:'فتح الأندلس 711م وأحرق السفن',a:'طارق بن زياد',o:['طارق بن زياد','خالد بن الوليد','صلاح الدين','عمرو بن العاص']},{q:'أب الجبر وكتاب الجبر والمقابلة',a:'الخوارزمي',o:['الخوارزمي','ابن سينا','ابن الهيثم','الرازي']},{q:'حضارة الهيروغليفية والأهرام',a:'المصريون القدماء',o:['المصريون القدماء','الرومان','الإغريق','الفرس']},{q:'سقطت الأندلس نهائياً عام',a:'1492',o:['1492','1453','1187','1258']},{q:'مخترع آلة الطباعة 1440',a:'غوتنبرغ',o:['غوتنبرغ','نيوتن','غاليليو','أديسون']}];
+function g2(){openScreen('📜 الآلة الزمنية');GS.total=HIST.length;let i=0;
+const next=()=>{if(i>=HIST.length)return gsEnd();const q=HIST[i++];
+$('gsBody').innerHTML=`<p class="text-[10px] text-gray-400">لغز ${i}/${HIST.length}</p><p class="text-sm text-gray-200 max-w-md mb-3">"${q.q}"</p><div class="grid grid-cols-2 gap-2 w-full max-w-sm">${optsHTML(q.o)}</div>`;
+bindOpts($('gsBody'),(b,ev)=>{if(b.dataset.o===q.a)gsWin(25,ev);else{gsLose();b.classList.add('no');}setTimeout(next,600);});};next();}
 
-    // ============= CHAT =============
-    function sendMessage() {
-        const input = document.getElementById('userInput');
-        if (!input.value.trim()) return;
-        document.getElementById('chatBox').innerHTML += `<div class="flex justify-end"><div class="bg-blue-600 text-white rounded-2xl p-3 text-sm">${input.value}</div></div>`;
-        input.value = '';
-    }
+/* 3 خط زمني */
+const TLINES=[[{t:'اختراع الطباعة 1440',o:1},{t:'النسبية 1905',o:2},{t:'اكتشاف DNA 1953',o:3},{t:'الويب 1989',o:4}],[{t:'سومر 3500ق.م',o:1},{t:'مصر 3100ق.م',o:2},{t:'اليونان 800ق.م',o:3},{t:'روما 753ق.م',o:4}]];
+function g3(){openScreen('⏳ الخط الزمني');const set=pick(TLINES);GS.total=set.length;let exp=1;
+$('gsBody').innerHTML=`<p class="text-[10px] text-gray-400 mb-2">انقر بالترتيب: الأقدم ← الأحدث</p><div class="flex flex-col gap-1.5 w-full max-w-sm">${shuffle(set).map(it=>`<button data-o="${it.o}" class="opt-btn bg-gray-900 border border-gray-700 p-2.5 rounded-lg text-[11px] text-white text-right">${it.t}</button>`).join('')}</div>`;
+bindOpts($('gsBody'),(b,ev)=>{if(+b.dataset.o===exp){b.classList.add('ok');b.disabled=true;exp++;gsWin(15,ev);if(exp>set.length){addXP(20,ev);gsEnd();}}else{gsLose();b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),400);}});}
 
-    function clearChat() {
-        document.getElementById('chatBox').innerHTML = '<div class="flex items-start gap-2"><div class="w-8 h-8 rounded-lg bg-blue-600/30 border border-blue-500/40 flex items-center justify-center text-xs font-bold text-blue-400">AI</div><div class="bg-gray-900 border border-gray-800 rounded-2xl p-3 text-xs text-gray-200">محادثة جديدة!</div></div>';
-    }
+/* 4 مغالطات */
+const FALL=[{t:'الكل يشتريه، إذن هو جيد!',a:'الاحتكام للأغلبية',e:'الشعبية ليست دليلاً على الصحة',o:['الاحتكام للأغلبية','الرجل القش','الانحدار الزلق','الشخصنة']},{t:'إن سمحنا بالآلة الحاسبة سينسى الجميع الرياضيات!',a:'الانحدار الزلق',e:'افتراض سلسلة كوارث بلا دليل',o:['التعميم المتسرع','الانحدار الزلق','السلطة','الدائرية']},{t:'لا تصدق التطور لأنها مجرد نظرية',a:'الالتباس اللغوي',e:'استغلال معنى كلمة نظرية',o:['الالتباس اللغوي','الأغلبية','الجهل','القشة']},{t:'هو محق لأنه غني وناجح',a:'الاحتكام للسلطة',e:'النجاح لا يثبت صحة الرأي',o:['الاحتكام للسلطة','الانحدار','الجهل','التعميم']}];
+function g4(){openScreen('💡 كاشف المغالطات');GS.total=FALL.length;let i=0;
+const next=()=>{if(i>=FALL.length)return gsEnd();const q=FALL[i++];
+$('gsBody').innerHTML=`<div class="bg-gray-900 p-3 rounded-lg border-r-4 border-emerald-500 max-w-md mb-2"><p class="text-xs italic">"${q.t}"</p></div><p class="text-[9px] text-gray-400 mb-2">ما نوع المغالطة؟</p><div class="grid grid-cols-1 gap-1.5 w-full max-w-sm">${optsHTML(q.o)}</div>`;
+bindOpts($('gsBody'),(b,ev)=>{if(b.dataset.o===q.a){gsWin(30,ev);toast('✓ '+q.e,'success');}else{gsLose();toast('✗ '+q.a+' — '+q.e,'error');}setTimeout(next,1200);});};next();}
 
-    // ============= CAMERA =============
-    let cameraStream = null;
-    async function startCamera() {
-        try {
-            cameraStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-            const video = document.getElementById('cameraVideo');
-            video.srcObject = cameraStream;
-            video.classList.remove('hidden');
-            document.getElementById('cameraPlaceholder').classList.add('hidden');
-        } catch (e) { showToast('⚠️ تعذر الوصول للكاميرا', 'error'); }
-    }
-    function stopCamera() {
-        if (cameraStream) {
-            cameraStream.getTracks().forEach(t => t.stop());
-            cameraStream = null;
-            document.getElementById('cameraVideo').classList.add('hidden');
-            document.getElementById('cameraPlaceholder').classList.remove('hidden');
-        }
-    }
-    function capturePhoto() { if (!cameraStream) showToast('⚠️ شغّل الكاميرا', 'warning'); else showToast('📸 تم الالتقاط', 'success'); }
+/* 5 فيزياء */
+const PHYS=[{q:'تسارع الجاذبية تقريباً؟',a:'9.8 m/s²',o:['9.8 m/s²','8.9','10.5','7.8']},{q:'كتلة 5kg وقوة 20N، التسارع؟',a:'4 m/s²',o:['4 m/s²','100','25','15']},{q:'لكل فعل رد فعل مساوٍ ومعاكس؟',a:'قانون نيوتن الثالث',o:['الثالث','الأول','الثاني','قانون أوم']},{q:'وحدة الطاقة؟',a:'الجول',o:['الجول','النيوتن','الواط','الفولت']},{q:'سرعة الضوء تقريباً؟',a:'300,000 km/s',o:['300,000 km/s','300 km/s','3000','150,000']},{q:'F = ؟',a:'m × a',o:['m × a','m / a','m + a','a / m']}];
+function g5(){openScreen('⚛️ الفيزياء');GS.total=PHYS.length;let i=0;
+const next=()=>{if(i>=PHYS.length)return gsEnd();const q=PHYS[i++];
+$('gsBody').innerHTML=`<p class="text-[10px] text-gray-400">سؤال ${i}/${PHYS.length}</p><p class="text-sm mb-3">${q.q}</p><div class="grid grid-cols-2 gap-2 w-full max-w-sm">${optsHTML(q.o)}</div>`;
+bindOpts($('gsBody'),(b,ev)=>{if(b.dataset.o===q.a)gsWin(20,ev);else gsLose();setTimeout(next,500);});};next();}
 
-    function handlePDFUpload(event) { showToast('📄 تم استلام الملف', 'info'); }
+/* 6 ذاكرة */
+const MEM=[['E=mc²','نسبية'],['F=ma','نيوتن'],['π≈3.14','دائرة'],['H₂O','ماء'],['NaCl','ملح'],['c=3×10⁸','ضوء']];
+function g6(){openScreen('🧠 الذاكرة العلمية');GS.total=MEM.length;
+const cards=shuffle(MEM.flatMap((p,i)=>[{id:i,t:p[0]},{id:i,t:p[1]}]));
+let fl=[],done=0;
+$('gsBody').innerHTML=`<div class="grid grid-cols-4 gap-1.5 w-full max-w-md">${cards.map((c,i)=>`<div data-i="${i}" data-id="${c.id}" class="card3d h-16 cursor-pointer"><div class="in"><div class="f bg-gradient-to-br from-pink-600 to-purple-600 font-black text-lg">؟</div><div class="b bg-gray-800 border-2 border-pink-500 text-[9px] text-white">${c.t}</div></div></div>`).join('')}</div>`;
+$('gsBody').querySelectorAll('.card3d').forEach(cd=>cd.onclick=ev=>{
+if(cd.classList.contains('fl')||fl.length===2)return;
+cd.classList.add('fl');fl.push(cd);
+if(fl.length===2){const[a,b]=fl;
+if(a.dataset.id===b.dataset.id&&a!==b){a.style.opacity=.5;b.style.opacity=.5;fl=[];done++;gsWin(10,ev);if(done===MEM.length){addXP(30,ev);setTimeout(gsEnd,600);}}
+else setTimeout(()=>{a.classList.remove('fl');b.classList.remove('fl');fl=[];gsLose();},700);}});}
 
-    function generateQuiz() { showToast('📝 تم توليد الاختبار', 'success'); }
-    function generateFlashcards() { showToast('🎴 تم توليد البطاقات', 'success'); }
+/* 7 برمجة */
+const CODE=[{c:'let x=5; if(x>3) x*=2; else x++; console.log(x);',a:'10',o:['10','6','5','11']},{c:'let s=0; for(let i=1;i<=3;i++) s+=i; console.log(s);',a:'6',o:['6','3','9','10']},{c:'let a=[1,2,3]; a.push(4); console.log(a.length);',a:'4',o:['4','3','5','2']},{c:'console.log(typeof "5");',a:'string',o:['string','number','int','text']}];
+function g7(){openScreen('💻 متاهة البرمجة');GS.total=CODE.length;let i=0;
+const next=()=>{if(i>=CODE.length)return gsEnd();const q=CODE[i++];
+$('gsBody').innerHTML=`<pre class="bg-black p-3 rounded-lg text-[10px] text-green-400 font-mono text-left w-full max-w-sm border border-gray-700 mb-2" dir="ltr">${q.c}</pre><div class="grid grid-cols-4 gap-1.5 w-full max-w-sm">${optsHTML(q.o)}</div>`;
+bindOpts($('gsBody'),(b,ev)=>{if(b.dataset.o===q.a)gsWin(25,ev);else gsLose();setTimeout(next,500);});};next();}
 
-    // ============= PARTICLES =============
-    function initParticles() {
-        const canvas = document.getElementById('bgCanvas');
-        const ctx = canvas.getContext('2d');
-        const resize = () => { canvas.width = window.innerWidth; canvas.height = window.innerHeight; };
-        resize();
-        window.addEventListener('resize', resize);
-        
-        const particles = [];
-        for (let i = 0; i < 50; i++) {
-            particles.push({
-                x: Math.random() * canvas.width,
-                y: Math.random() * canvas.height,
-                r: Math.random() * 2 + 0.5,
-                vx: (Math.random() - 0.5) * 0.4,
-                vy: (Math.random() - 0.5) * 0.4,
-                color: ['rgba(245, 158, 11, 0.4)', 'rgba(59, 130, 246, 0.3)', 'rgba(168, 85, 247, 0.3)'][Math.floor(Math.random() * 3)]
-            });
-        }
-        
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => {
-                ctx.beginPath();
-                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-                ctx.fillStyle = p.color;
-                ctx.fill();
-                p.x += p.vx; p.y += p.vy;
-                if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
-                if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
-            });
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const d = Math.sqrt(dx * dx + dy * dy);
-                    if (d < 120) {
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.strokeStyle = `rgba(100, 150, 255, ${0.15 * (1 - d/120)})`;
-                        ctx.lineWidth = 0.5;
-                        ctx.stroke();
-                    }
-                }
-            }
-            requestAnimationFrame(draw);
-        }
-        draw();
-    }
+/* 8 كلمات */
+const WORDS=[{w:'جاذبية',h:'قوة تجذب الأجسام للأرض'},{w:'الكترون',h:'جسيم سالب في الذرة'},{w:'خوارزمية',h:'خطوات حل مشكلة'},{w:'مجرة',h:'تجمع هائل من النجوم'}];
+function g8(){openScreen('🔠 فك المصطلحات');GS.total=WORDS.length;let i=0;
+const next=()=>{if(i>=WORDS.length)return gsEnd();const p=WORDS[i++];let ans=[];
+$('gsBody').innerHTML=`<p class="text-[10px] text-gray-400">تلميح: <span class="text-amber-300">${p.h}</span></p><div id="slots" class="flex gap-1 justify-center min-h-[42px] my-2 flex-wrap"></div><div id="tls" class="flex gap-1 justify-center flex-wrap">${shuffle(p.w.split('')).map(l=>`<div class="tile">${l}</div>`).join('')}</div><div class="flex gap-2 mt-2"><button id="und" class="btn px-3 py-1.5 rounded-lg text-[10px] text-gray-300">تراجع</button><button id="chk" class="btn px-4 py-1.5 rounded-lg text-[10px] font-bold bg-rose-600 text-white">تحقق</button></div>`;
+const draw=()=>$('slots').innerHTML=ans.map(l=>`<div class="tile !bg-emerald-700">${l}</div>`).join('');
+let used=[];
+$('tls').querySelectorAll('.tile').forEach(t=>t.onclick=()=>{t.classList.add('used');used.push(t);ans.push(t.textContent);draw();});
+$('und').onclick=()=>{if(used.length){used.pop().classList.remove('used');ans.pop();draw();}};
+$('chk').onclick=ev=>{if(ans.join('')===p.w)gsWin(20,ev);else gsLose();setTimeout(next,600);};};next();}
 
-    function updateDailyTimer() {
-        const now = new Date();
-        const tomorrow = new Date(now);
-        tomorrow.setDate(tomorrow.getDate() + 1);
-        tomorrow.setHours(0, 0, 0, 0);
-        const diff = tomorrow - now;
-        const h = Math.floor(diff / 3600000);
-        const m = Math.floor((diff % 3600000) / 60000);
-        const el = document.getElementById('dailyTimer');
-        if (el) el.textContent = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-    }
+/* 9 تصنيف */
+const CLS=[{t:'F=ma',c:'فيزياء'},{t:'a²+b²=c²',c:'رياضيات'},{t:'H₂O',c:'كيمياء'},{t:'π',c:'رياضيات'},{t:'E=mc²',c:'فيزياء'},{t:'NaCl',c:'كيمياء'},{t:'الجول',c:'فيزياء'},{t:'المشتقة',c:'رياضيات'},{t:'الأكسجين',c:'كيمياء'}];
+function g9(){openScreen('🎯 صنّف المفاهيم');const q=shuffle(CLS);GS.total=q.length;let i=0;
+const cats=['فيزياء','رياضيات','كيمياء'];
+const next=()=>{if(i>=q.length)return gsEnd();const it=q[i++];
+$('gsBody').innerHTML=`<p class="text-[10px] text-gray-400">عنصر ${i}/${q.length}</p><div class="text-2xl font-black text-yellow-300 my-3">${it.t}</div><div class="grid grid-cols-3 gap-2 w-full max-w-sm">${cats.map(c=>`<button data-o="${c}" class="opt-btn bg-gray-900 border border-gray-700 p-2.5 rounded-lg text-[11px] font-bold">${c}</button>`).join('')}</div>`;
+bindOpts($('gsBody'),(b,ev)=>{if(b.dataset.o===it.c)gsWin(15,ev);else gsLose();setTimeout(next,400);});};next();}
 
-    // ============= INIT =============
-    window.addEventListener('DOMContentLoaded', () => {
-        loadState();
-        lucide.createIcons();
-        initParticles();
-        updateUI();
-        renderAchievements();
-        updateDailyTimer();
-        setInterval(updateDailyTimer, 60000);
-        
-        switchTab('dashboard');
-        showToast('🚀 مرحباً بك في الأكاديمية!', 'info');
-    });
-    </script>
-</body>
-  </html>
+/* 10 تخمين */
+const GUESS=[{n:'أينشتاين',keys:['اينشتاين','اينشتاين'],h:['عالم','ألماني','فيزياء','النسبية','نوبل']},{n:'الأهرامات',keys:['اهرام','الاهرامات','اهرامات'],h:['بناء','مصر','قديم','مقابر','حجر']},{n:'الشمس',keys:['شمس','الشمس'],h:['نجم','ضوء','حرارة','طاقة','نهار']}];
+function g10(){openScreen('🔍 خمّن الشخصية');const t=pick(GUESS);let rev=0,tries=3;
+const draw=()=>{$('gsBody').innerHTML=`<div class="text-5xl mb-2">❓</div><div class="flex flex-wrap gap-1 justify-center mb-2 max-w-sm">${t.h.slice(0,rev).map(h=>`<span class="bg-blue-600/30 border border-blue-500/50 px-2 py-0.5 rounded text-[9px] text-blue-200">${h}</span>`).join('')||'<span class="text-[9px] text-gray-500">اكشف تلميحات أو خمّن مباشرة</span>'}</div><div class="flex gap-1.5 w-full max-w-sm"><button id="rv" class="btn px-3 py-1.5 rounded-lg text-[10px] text-amber-300">تلميح</button><input id="gi" class="flex-1 bg-gray-900 border border-gray-700 rounded-lg px-2 text-xs focus:border-teal-500 focus:outline-none" placeholder="تخمينك…"><button id="gsb" class="btn px-3 py-1.5 rounded-lg text-[10px] font-bold bg-teal-600 text-white">خمّن (${tries})</button></div>`;
+$('rv').onclick=()=>{if(rev<t.h.length){rev++;draw();}};
+const go=ev=>{const g=norm($('gi').value);if(!g)return;
+if(t.keys.some(k=>g.includes(k))){gsWin(Math.max(30,90-rev*15),ev);gsEnd();}
+else{gsLose();tries--;if(tries<=0){toast('الإجابة: '+t.n,'warn');gsEnd();}else draw();}};
+$('gsb').onclick=go;$('gi').onkeypress=e=>{if(e.key==='Enter')go(e);};};draw();}
+
+/* 11 شامل */
+function g11(){openScreen('🏆 التحدي الشامل');GS.total=6;let i=0;
+const qs=[...[0,1].map(()=>{const a=3+Math.floor(Math.random()*12),b=3+Math.floor(Math.random()*12);return{type:'in',q:`${a} × ${b} = ؟`,a:String(a*b)}}),
+{type:'ch',q:'وحدة القوة؟',a:'نيوتن',o:['نيوتن','جول','واط','أمبير']},
+{type:'ch',q:'متى بدأت الحرب العالمية الأولى؟',a:'1914',o:['1914','1939','1918','1905']},
+{type:'ch',q:'الرمز الكيميائي للذهب؟',a:'Au',o:['Au','Ag','Go','Gd']},
+{type:'in',q:'جذر 144؟',a:'12'}];
+const next=()=>{if(i>=6)return gsEnd();const q=qs[i++];
+if(q.type==='in'){$('gsBody').innerHTML=`<p class="text-[10px] text-gray-400">سؤال ${i}/6</p><p class="text-lg font-bold my-2">${q.q}</p><div class="flex gap-2 w-full max-w-xs"><input id="ans" class="flex-1 bg-gray-900 border border-gray-700 rounded-lg p-2 text-center text-sm focus:border-red-500 focus:outline-none"><button id="go" class="btn px-4 rounded-lg text-xs font-bold bg-red-600 text-white">✓</button></div>`;
+const go=ev=>{if($('ans').value.trim()===q.a)gsWin(30,ev);else gsLose();next();};$('go').onclick=go;$('ans').onkeypress=e=>{if(e.key==='Enter')go(e);};$('ans').focus();}
+else{$('gsBody').innerHTML=`<p class="text-[10px] text-gray-400">سؤال ${i}/6</p><p class="text-sm mb-2">${q.q}</p><div class="grid grid-cols-2 gap-2 w-full max-w-sm">${optsHTML(q.o)}</div>`;
+bindOpts($('gsBody'),(b,ev)=>{if(b.dataset.o===q.a)gsWin(30,ev);else gsLose();setTimeout(next,400);});}};next();}
+
+function openGame(id){({1:g1,2:g2,3:g3,4:g4,5:g5,6:g6,7:g7,8:g8,9:g9,10:g10,11:g11})[id]();}
+
+/* ================= المساعد الصوتي ================= */
+const KB=[
+{k:['مرحبا','سلام','اهلا','هلا','صباح','مساء'],a:'أهلا
