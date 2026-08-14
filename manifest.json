@@ -1,0 +1,15 @@
+{
+  "name": "فاهم - المساعد الدراسي الذكي",
+  "short_name": "فاهم",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0e1117",
+  "theme_color": "#4F46E5",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/3429/3429433.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
