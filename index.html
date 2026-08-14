@@ -11,7 +11,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&display=swap');
 *{font-family:'Tajawal',sans-serif;box-sizing:border-box}
-body{background:#030712;color:#f9fafb;overflow:hidden}
+body{background:#030712;color:#f9fafb;overflow-x:hidden}
 ::-webkit-scrollbar{width:5px;height:5px}::-webkit-scrollbar-thumb{background:#1f2937;border-radius:9px}
 .panel{background:rgba(17,24,39,.78);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.08)}
 .card{background:rgba(31,41,55,.6);border:1px solid rgba(255,255,255,.06);transition:.25s}
@@ -41,9 +41,6 @@ body{background:#030712;color:#f9fafb;overflow:hidden}
 .tile:hover{transform:translateY(-3px)}
 .tile.used{opacity:.25;pointer-events:none}
 .pbar{transition:width .5s ease}
-.typing span{display:inline-block;width:6px;height:6px;border-radius:50%;background:#60a5fa;animation:typ 1.2s infinite}
-.typing span:nth-child(2){animation-delay:.2s}.typing span:nth-child(3){animation-delay:.4s}
-@keyframes typ{30%{transform:translateY(-7px);opacity:1}0%,60%,100%{transform:none;opacity:.6}}
 .call-av{animation:avp 2s infinite}
 @keyframes avp{0%{box-shadow:0 0 0 0 rgba(34,197,94,.6)}70%{box-shadow:0 0 0 30px rgba(34,197,94,0)}100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}}
 .wave{display:flex;gap:3px;align-items:flex-end;height:26px}
@@ -114,7 +111,7 @@ body{background:#030712;color:#f9fafb;overflow:hidden}
     <div class="card p-2.5 rounded-lg border-t-2 border-yellow-500"><p class="text-[9px] text-gray-400">الإنجازات</p><h3 id="hBadges" class="text-base font-black text-yellow-400">0</h3></div>
   </div>
   <div class="bg-gradient-to-l from-indigo-900/50 to-purple-900/40 p-3 rounded-xl border border-purple-500/30">
-    <div class="flex justify-between items-center mb-1.5"><h3 class="font-black text-xs text-amber-200 flex items-center gap-1"><i data-lucide="sunrise" class="w-4 h-4"></i>تحدي اليوم</h3><span class="text-[9px] text-gray-400">ينتهي خلال <b id="dailyTimer">--:--</b></span></div>
+    <div class="flex justify-between items-center mb-1.5"><h3 class="font-black text-xs text-amber-200 flex items-center gap-1"><i data-lucide="sunrise" class="w-4 h-4"></i>تحدي اليوم</h3><span class="text-[9px] text-gray-400">أكمل التحدي اليومي</span></div>
     <p class="text-[10px] text-gray-300 mb-2">أكمل 3 جولات لعب حقيقية لتربح 200 XP</p>
     <div class="flex items-center gap-2"><div class="flex-1 h-1.5 bg-gray-800 rounded-full overflow-hidden"><div id="dailyBar" class="pbar h-full bg-gradient-to-r from-amber-500 to-pink-500" style="width:0%"></div></div><span id="dailyTxt" class="text-[9px] text-gray-400">0/3</span></div>
   </div>
@@ -204,8 +201,6 @@ body{background:#030712;color:#f9fafb;overflow:hidden}
     <div class="card p-2.5 rounded-lg grid grid-cols-3 gap-2 text-[10px]"><div>الملف: <b id="pdfName" class="text-white">-</b></div><div>الصفحات: <b id="pdfPages" class="text-white">-</b></div><div>الكلمات: <b id="pdfWords" class="text-white">-</b></div></div>
     <div class="card p-2.5 rounded-lg"><h4 class="text-[10px] font-bold text-emerald-300 mb-1">✨ الملخص</h4><p id="pdfSummary" class="text-[11px] text-gray-300 leading-relaxed">-</p></div>
     <div class="card p-2.5 rounded-lg"><h4 class="text-[10px] font-bold text-purple-300 mb-1">🔑 الكلمات المفتاحية</h4><div id="pdfKeys" class="flex flex-wrap gap-1"></div></div>
-    <button id="pdfQuizBtn" class="btn px-3 py-2 rounded-lg text-[10px] font-bold text-amber-300 w-fit flex items-center gap-1"><i data-lucide="help-circle" class="w-3.5 h-3.5"></i>ولّد اختباراً من الملف</button>
-    <div id="pdfQuiz" class="flex flex-col gap-2"></div>
     <div class="card p-2.5 rounded-lg"><h4 class="text-[10px] font-bold text-gray-400 mb-1">النص المستخرج</h4><div id="pdfText" class="text-[10px] text-gray-500 max-h-32 overflow-y-auto"></div></div>
   </div>
 </section>
@@ -224,7 +219,6 @@ body{background:#030712;color:#f9fafb;overflow:hidden}
   </div>
   <img id="camShot" class="hidden max-w-md w-full rounded-xl border border-emerald-500/40">
   <canvas id="camCanvas" class="hidden"></canvas>
-  <p class="text-[9px] text-gray-500">التقط صورة سؤالك ثم اكتبه للمساعد الصوتي ليشرحه لك</p>
 </section>
 
 <!-- التصنيف -->
@@ -249,8 +243,6 @@ body{background:#030712;color:#f9fafb;overflow:hidden}
     <div class="flex justify-between items-center bg-amber-500/10 border border-amber-500/30 p-2 rounded-lg"><div class="flex items-center gap-2"><span>🥇</span><div><b class="text-[10px] text-amber-200">الراحل عبر الزمن ⏳</b><p class="text-[8px] text-amber-400/70">أسطورة الأكاديمية</p></div></div><b class="text-[10px] text-amber-300">3,450 XP</b></div>
     <div class="flex justify-between items-center bg-gray-800/60 p-2 rounded-lg"><div class="flex items-center gap-2"><span>🥈</span><div><b class="text-[10px] text-gray-200">صانع المعادلات 🧮</b><p class="text-[8px] text-gray-400">عبقري الحساب</p></div></div><b class="text-[10px] text-gray-300">2,980 XP</b></div>
     <div id="userCard" class="flex justify-between items-center bg-blue-600/20 border border-blue-500/50 p-2 rounded-lg"><div class="flex items-center gap-2"><span class="text-[10px] font-black text-blue-400">#3</span><div><b id="userDisplayName" class="text-[10px] text-blue-200">الفيزيائي المجهول ⚛️ (أنت)</b><p class="text-[8px] text-blue-300">باحث متميز</p></div></div><b id="lbUserXP" class="text-[10px] text-blue-300">0 XP</b></div>
-    <div id="hiddenBanner" class="hidden p-4 text-center bg-gray-950 rounded-lg border border-dashed border-gray-800"><i data-lucide="eye-off" class="w-6 h-6 text-gray-600 mx-auto mb-1"></i><p class="text-[10px] text-gray-400">وضع الخصوصية مفعّل — نقاطك محلية فقط</p></div>
-    <div class="flex justify-between items-center bg-gray-900/50 p-2 rounded-lg"><div class="flex items-center gap-2"><span class="text-[10px] text-gray-500">#4</span><div><b class="text-[10px] text-gray-300">فارس المنطق 🛡️</b><p class="text-[8px] text-gray-500">محلل فلسفي</p></div></div><b class="text-[10px] text-gray-400">950 XP</b></div>
   </div>
 </section>
 
@@ -264,22 +256,6 @@ body{background:#030712;color:#f9fafb;overflow:hidden}
 </div>
 </div>
 
-<!-- نافذة الدعم -->
-<div id="supportModal" class="hidden fixed inset-0 bg-black/75 backdrop-blur z-[998] flex items-center justify-center">
-  <div class="panel rounded-2xl p-5 max-w-sm w-[90%] border-cyan-500/40">
-    <div class="flex items-center gap-3 mb-3">
-      <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-blue-600 rounded-full flex items-center justify-center font-black text-xl">م</div>
-      <div><h3 class="font-black text-sm text-cyan-200">الدعم الفني المباشر</h3><p class="text-[10px] text-cyan-300 font-bold">@m3v30 • متصل 24/7</p></div>
-    </div>
-    <p class="text-[11px] text-gray-400 mb-4">لأي مشكلة تقنية أو استفسار تواصل معنا مباشرة عبر تلغرام.</p>
-    <a href="https://t.me/m3v30" target="_blank" rel="noopener" class="tg-btn w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold text-white">فتح محادثة تلغرام 📨</a>
-    <button onclick="document.getElementById('supportModal').classList.add('hidden')" class="w-full mt-2 text-[10px] text-gray-500 hover:text-white">إغلاق</button>
-  </div>
-</div>
-<button onclick="document.getElementById('supportModal').classList.remove('hidden')" class="fixed bottom-5 left-5 z-[500] w-14 h-14 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center shadow-xl shadow-cyan-500/40 call-av" title="الدعم الفني">
-  <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
-</button>
-
 <!-- شاشة الاتصال الصوتي -->
 <div id="callOverlay" class="hidden fixed inset-0 bg-black/90 backdrop-blur z-[997] flex flex-col items-center justify-center gap-4">
   <div class="w-28 h-28 rounded-full bg-gradient-to-br from-emerald-500 to-teal-600 flex items-center justify-center call-av"><i data-lucide="bot" class="w-14 h-14 text-white"></i></div>
@@ -291,7 +267,7 @@ body{background:#030712;color:#f9fafb;overflow:hidden}
 </div>
 
 <script>
-/* ================= الأدوات ================= */
+/* ================= الأدوات والتهيئة ================= */
 const $=id=>document.getElementById(id);
 const shuffle=a=>[...a].sort(()=>Math.random()-.5);
 const pick=a=>a[Math.floor(Math.random()*a.length)];
@@ -351,7 +327,7 @@ function checkBadges(){BADGES.forEach(b=>{if(!S.badges.includes(b.id)&&b.c()){S.
 function renderBadges(){$('badgeGrid').innerHTML=BADGES.map(b=>{const u=S.badges.includes(b.id);
 return `<div class="card p-3 rounded-xl border-2 ${u?'border-yellow-500/50':'border-gray-800 opacity-50'}"><div class="text-2xl mb-1">${u?b.i:'🔒'}</div><b class="text-[10px] ${u?'text-yellow-300':'text-gray-400'}">${b.t}</b><p class="text-[9px] text-gray-400 mt-0.5">${b.d}</p></div>`;}).join('');}
 
-/* ================= الواجهة ================= */
+/* ================= تحديث الواجهة ================= */
 function updateUI(){$('xpValue').textContent=S.xp.toLocaleString('en-US');$('userLevel').textContent=S.level;
 $('streakDays').textContent=S.streak;$('comboCount').textContent='x'+S.combo;
 const need=S.level*500,cur=S.xp-(S.level-1)*500;
@@ -371,7 +347,7 @@ document.querySelectorAll('.nav-item').forEach(n=>n.onclick=()=>switchView(n.dat
 
 $('soundToggle').onclick=()=>{S.sound=!S.sound;$('soundToggle').innerHTML=`<i data-lucide="${S.sound?'volume-2':'volume-x'}" class="w-4 h-4 text-cyan-300"></i>`;lucide.createIcons();save();};
 $('resetBtn').onclick=()=>{if(confirm('تصفير كل التقدم؟')){localStorage.removeItem('acad4');location.reload();}};
-$('toggleLb').onchange=e=>{S.visible=e.target.checked;$('userCard').classList.toggle('hidden',!S.visible);$('hiddenBanner').classList.toggle('hidden',S.visible);save();};
+$('toggleLb').onchange=e=>{S.visible=e.target.checked;$('userCard').classList.toggle('hidden',!S.visible);save();};
 $('avatarSelect').onchange=e=>{S.avatar=e.target.value;$('userDisplayName').textContent=S.avatar+' (أنت)';save();};
 
 /* ================= محرك الألعاب ================= */
@@ -507,6 +483,103 @@ bindOpts($('gsBody'),(b,ev)=>{if(b.dataset.o===q.a)gsWin(30,ev);else gsLose();se
 
 function openGame(id){({1:g1,2:g2,3:g3,4:g4,5:g5,6:g6,7:g7,8:g8,9:g9,10:g10,11:g11})[id]();}
 
-/* ================= المساعد الصوتي ================= */
+/* ================= المساعد الصوتي والمحادثة ================= */
 const KB=[
-{k:['مرحبا','سلام','اهلا','هلا','صباح','مساء'],a:'أهلا
+  {k:['مرحبا','سلام','اهلا','هلا','صباح','مساء'],a:'أهلاً بك! أنا مساعدك الذكي في الأكاديمية الشاملة، كيف يمكنني مساعدتك اليوم؟'},
+  {k:['من انت','عرف عن نفسك'],a:'أنا الروبوت التعليمي الذكي، أساعدك في حل الأسئلة وتلخيص الدروس والتحديات العلمية.'},
+  {k:['شكرا','مشكور'],a:'العفو! أنا دائماً في الخدمة. استمر في التحدي وجمع النقاط!'},
+  {k:['اختبار','امتحان'],a:'يمكنك الانتقال لقسم الاختبارات لتوليد أسئلة وبطاقات استذكار متقدمة.'},
+  {k:['لعبة','تحدي'],a:'لدينا 11 لعبة تعليمية متنوعة في ساحة التحديات، اختر منها ما يناسبك واكسب XP!'}
+];
+
+function getAIResponse(msg) {
+  const normMsg = norm(msg);
+  for (let item of KB) {
+    if (item.k.some(k => normMsg.includes(k))) return item.a;
+  }
+  return "سؤال ممتاز! يمكنك استكشاف المزيد حول هذا الموضوع عبر قسم الاختبارات أو الألعاب التعليمية لتطوير مهاراتك.";
+}
+
+const chatLog = $('chatLog');
+const chatInput = $('chatInput');
+const sendBtn = $('sendBtn');
+const micBtn = $('micBtn');
+const callBtn = $('callBtn');
+const aiClear = $('aiClear');
+
+function appendMessage(sender, text) {
+  if (!chatLog) return;
+  const isUser = sender === 'user';
+  const div = document.createElement('div');
+  div.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-2`;
+  div.innerHTML = `
+    <div class="max-w-[80%] p-2.5 rounded-xl text-xs ${isUser ? 'bg-blue-600 text-white rounded-br-none' : 'bg-gray-800 text-emerald-200 border border-emerald-500/30 rounded-bl-none'}">
+      <p class="font-bold mb-0.5 text-[9px] opacity-75">${isUser ? 'أنت' : 'الروبوت الذكي'}</p>
+      <p class="leading-relaxed">${text}</p>
+    </div>
+  `;
+  chatLog.appendChild(div);
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+function handleSend() {
+  if (!chatInput) return;
+  const val = chatInput.value.trim();
+  if (!val) return;
+  appendMessage('user', val);
+  chatInput.value = '';
+  
+  setTimeout(() => {
+    const reply = getAIResponse(val);
+    appendMessage('ai', reply);
+    addXP(5);
+  }, 400);
+}
+
+if (sendBtn) sendBtn.onclick = handleSend;
+if (chatInput) chatInput.onkeypress = (e) => { if (e.key === 'Enter') handleSend(); };
+if (aiClear) aiClear.onclick = () => { if (chatLog) chatLog.innerHTML = ''; };
+
+/* الاتصال الصوتي */
+const callOverlay = $('callOverlay');
+const callStatus = $('callStatus');
+const callText = $('callText');
+const callWave = $('callWave');
+const endCallBtn = $('endCallBtn');
+
+if (callBtn) {
+  callBtn.onclick = () => {
+    if (callOverlay) callOverlay.classList.remove('hidden');
+    if (callStatus) callStatus.textContent = 'جارٍ الاتصال...';
+    if (callWave) callWave.classList.remove('hidden');
+    
+    setTimeout(() => {
+      if (callStatus) callStatus.textContent = 'متصل (تحدث الآن)';
+      if (callText) callText.textContent = 'مرحباً بك! أنا أسمعك الآن، تفضل بطرح سؤالك.';
+      S.voice = (S.voice || 0) + 1;
+      updateUI();
+    }, 1200);
+  };
+}
+
+if (endCallBtn) {
+  endCallBtn.onclick = () => {
+    if (callOverlay) callOverlay.classList.add('hidden');
+    if (callWave) callWave.classList.add('hidden');
+  };
+}
+
+/* المايك للتعرف الصوتي */
+if (micBtn && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const recognition = new SpeechRecognition();
+  recognition.lang = 'ar-SA';
+  
+  micBtn.onclick = () => {
+    recognition.start();
+    toast('جارٍ الاستماع...', 'info');
+  };
+  
+  recognition.onresult = (event) => {
+    const text = event.results[0][0].transcript;
+    if 
