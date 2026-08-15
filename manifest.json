@@ -1,9 +1,0 @@
-{
-  "short_name": "ReactFlowCalc",
-  "name": "React Flow Circuit & Power Calculator",
-  "icons": [],
-  "start_url": ".",
-  "background_color": "#ffffff",
-  "theme_color": "#007bff",
-  "display": "standalone"
-}
