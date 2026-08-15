@@ -1,7 +1,8 @@
 import streamlit as st
 import streamlit.components.v1 as components
-import json
-from datetime import datetime
+import os
+import tempfile
+import base64
 
 st.set_page_config(
     page_title="المختبر التفاعلي للدوائر الكهربائية",
@@ -9,6 +10,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
+# Header styling
 st.markdown("""
     <style>
         .block-container { padding: 1rem 2rem; }
@@ -90,8 +92,9 @@ st.markdown("""
     </div>
 """, unsafe_allow_html=True)
 
-react_flow_html = """
-<!DOCTYPE html>
+# Create HTML content as a function to avoid string parsing issues
+def get_html_content():
+    return '''<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -126,7 +129,6 @@ react_flow_html = """
             background: #f8fafc;
         }
         
-        /* Sidebar */
         .sidebar {
             width: 280px;
             background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
@@ -211,7 +213,6 @@ react_flow_html = """
             color: #94a3b8;
         }
         
-        /* Main Canvas */
         .canvas-wrapper {
             flex: 1;
             position: relative;
@@ -256,19 +257,12 @@ react_flow_html = """
             box-shadow: 0 4px 15px rgba(59, 130, 246, 0.3);
         }
         
-        .toolbar-btn.active {
-            background: #3b82f6;
-            color: white;
-            border-color: #3b82f6;
-        }
-        
         .toolbar-btn.danger:hover {
             background: #ef4444;
             border-color: #ef4444;
             box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
         }
         
-        /* Properties Panel */
         .properties-panel {
             width: 320px;
             background: white;
@@ -399,7 +393,6 @@ react_flow_html = """
             font-size: 13px;
         }
         
-        /* Custom Nodes */
         .circuit-node {
             background: white;
             border-radius: 16px;
@@ -499,7 +492,6 @@ react_flow_html = """
             transform: scale(1.1);
         }
         
-        /* React Flow overrides */
         .react-flow__node {
             font-family: 'Tajawal', sans-serif;
         }
@@ -529,7 +521,6 @@ react_flow_html = """
             left: -6px;
         }
         
-        /* Loading Screen */
         .loading-screen {
             position: fixed;
             top: 0;
@@ -564,7 +555,6 @@ react_flow_html = """
             font-weight: 700;
         }
         
-        /* Toast Notifications */
         .toast {
             position: fixed;
             top: 20px;
@@ -585,7 +575,6 @@ react_flow_html = """
             transform: translateX(-50%) translateY(0);
         }
         
-        /* Status Bar */
         .status-bar {
             position: absolute;
             bottom: 20px;
@@ -621,7 +610,6 @@ react_flow_html = """
             50% { opacity: 0.5; }
         }
         
-        /* Dark Mode */
         .dark-mode .canvas-wrapper {
             background: #0f172a;
         }
@@ -687,631 +675,457 @@ react_flow_html = """
 <body>
     <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useCallback, useMemo, useEffect, useRef } = React;
-        
-        // Safe React Flow initialization
-        const RF = window.ReactFlow || {};
-        const ReactFlowComponent = RF.default || RF.ReactFlow || (() => React.createElement('div', { style: { padding: 40, textAlign: 'center' } }, '⚠️ جاري تحميل المكتبة...'));
-        const { 
-            Handle, 
-            Position, 
-            useNodesState, 
-            useEdgesState, 
-            Background, 
-            Controls, 
-            MiniMap,
-            MarkerType,
-            addEdge,
-            useReactFlow
-        } = RF;
+    <script>
+        // Load React Flow safely
+        window.addEventListener('DOMContentLoaded', function() {
+            const RF = window.ReactFlow || {};
+            const ReactFlowComponent = RF.default || RF.ReactFlow || function() {
+                return React.createElement('div', { style: { padding: 40, textAlign: 'center', color: '#64748b' } }, '⚠️ جاري تحميل المكتبة...');
+            };
+            
+            const Handle = RF.Handle;
+            const Position = RF.Position;
+            const useNodesState = RF.useNodesState;
+            const useEdgesState = RF.useEdgesState;
+            const Background = RF.Background;
+            const Controls = RF.Controls;
+            const MiniMap = RF.MiniMap;
+            const MarkerType = RF.MarkerType;
+            const addEdge = RF.addEdge;
+            
+            const COMPONENT_TYPES = {
+                battery: { label: 'بطارية', icon: '🔋', desc: 'مصدر جهد ثابت', color: '#ef4444', defaults: { voltage: 12, current: 0, resistance: 0 } },
+                resistor: { label: 'مقاومة', icon: '🔴', desc: 'مقاومة أومية', color: '#f59e0b', defaults: { voltage: 0, current: 0, resistance: 100 } },
+                led: { label: 'LED', icon: '💡', desc: 'صمام ثاعي باعث للضوء', color: '#10b981', defaults: { voltage: 2, current: 0.02, resistance: 100 } },
+                switch: { label: 'مفتاح', icon: '🔘', desc: 'مفتاح فتح/غلق', color: '#8b5cf6', defaults: { closed: true, voltage: 0, current: 0, resistance: 0 } },
+                capacitor: { label: 'مكثف', icon: '⚡', desc: 'مكثف كهربائي', color: '#06b6d4', defaults: { capacitance: 100, voltage: 0, current: 0 } },
+                ammeter: { label: 'أميتر', icon: '🔵', desc: 'مقياس التيار', color: '#ec4899', defaults: { current: 0, voltage: 0 } },
+                voltmeter: { label: 'فولتميتر', icon: '🔷', desc: 'مقياس الجهد', color: '#6366f1', defaults: { voltage: 0, current: 0 } }
+            };
 
-        // Component Types Configuration
-        const COMPONENT_TYPES = {
-            battery: {
-                label: 'بطارية',
-                icon: '🔋',
-                desc: 'مصدر جهد ثابت',
-                color: '#ef4444',
-                badge: 'بطارية',
-                defaults: { voltage: 12, current: 0, resistance: 0 }
-            },
-            resistor: {
-                label: 'مقاومة',
-                icon: '🔴',
-                desc: 'مقاومة أومية',
-                color: '#f59e0b',
-                badge: 'مقاومة',
-                defaults: { voltage: 0, current: 0, resistance: 100 }
-            },
-            led: {
-                label: 'LED',
-                icon: '💡',
-                desc: 'صمام ثنائي باعث للضوء',
-                color: '#10b981',
-                badge: 'LED',
-                defaults: { voltage: 2, current: 0.02, resistance: 100 }
-            },
-            switch: {
-                label: 'مفتاح',
-                icon: '🔘',
-                desc: 'مفتاح فتح/غلق',
-                color: '#8b5cf6',
-                badge: 'مفتاح',
-                defaults: { closed: true, voltage: 0, current: 0, resistance: 0 }
-            },
-            capacitor: {
-                label: 'مكثف',
-                icon: '⚡',
-                desc: 'مكثف كهربائي',
-                color: '#06b6d4',
-                badge: 'مكثف',
-                defaults: { capacitance: 100, voltage: 0, current: 0 }
-            },
-            ammeter: {
-                label: 'أميتر',
-                icon: '🔵',
-                desc: 'مقياس التيار',
-                color: '#ec4899',
-                badge: 'أميتر',
-                defaults: { current: 0, voltage: 0 }
-            },
-            voltmeter: {
-                label: 'فولتميتر',
-                icon: '🔷',
-                desc: 'مقياس الجهد',
-                color: '#6366f1',
-                badge: 'فولتميتر',
-                defaults: { voltage: 0, current: 0 }
+            function CircuitNode(props) {
+                const data = props.data || {};
+                const selected = props.selected || false;
+                const componentType = data.type || 'resistor';
+                const config = COMPONENT_TYPES[componentType];
+                
+                const v = Number(data.voltage) || 0;
+                const r = Number(data.resistance) || 0;
+                const i = Number(data.current) || 0;
+                
+                const getDisplayValue = function() {
+                    if (componentType === 'battery') return v + 'V';
+                    if (componentType === 'resistor') return r + 'Ω';
+                    if (componentType === 'capacitor') return (Number(data.capacitance) || 0) + 'μF';
+                    if (componentType === 'led') return v + 'V';
+                    if (componentType === 'switch') return data.closed ? 'مغلق' : 'مفتوح';
+                    if (componentType === 'ammeter') return i.toFixed(3) + 'A';
+                    if (componentType === 'voltmeter') return v.toFixed(2) + 'V';
+                    return '';
+                };
+                
+                return React.createElement('div', {
+                    className: 'circuit-node ' + (selected ? 'selected' : '') + ' ' + componentType
+                }, [
+                    React.createElement(Handle, { key: 'target', type: 'target', position: Position.Left }),
+                    React.createElement('div', { key: 'header', className: 'node-header' }, [
+                        React.createElement('div', { key: 'title', className: 'node-title' }, [
+                            React.createElement('span', { key: 'icon' }, config.icon),
+                            React.createElement('span', { key: 'label' }, data.label || config.label)
+                        ]),
+                        React.createElement('span', { key: 'badge', className: 'node-badge ' + componentType }, getDisplayValue())
+                    ]),
+                    React.createElement('div', { key: 'body', className: 'node-body' }, 
+                        componentType !== 'switch' ? [
+                            React.createElement('div', { key: 'v', className: 'node-stat' }, [
+                                React.createElement('span', { key: 'l', className: 'node-stat-label' }, 'الجهد:'),
+                                React.createElement('span', { key: 'v', className: 'node-stat-value' }, v.toFixed(2) + ' V')
+                            ]),
+                            React.createElement('div', { key: 'i', className: 'node-stat' }, [
+                                React.createElement('span', { key: 'l', className: 'node-stat-label' }, 'التيار:'),
+                                React.createElement('span', { key: 'i', className: 'node-stat-value' }, i.toFixed(3) + ' A')
+                            ]),
+                            r > 0 ? React.createElement('div', { key: 'r', className: 'node-stat' }, [
+                                React.createElement('span', { key: 'l', className: 'node-stat-label' }, 'المقاومة:'),
+                                React.createElement('span', { key: 'r', className: 'node-stat-value' }, r + ' Ω')
+                            ]) : null
+                        ] : [
+                            React.createElement('div', { key: 's', className: 'node-stat' }, [
+                                React.createElement('span', { key: 'l', className: 'node-stat-label' }, 'الحالة:'),
+                                React.createElement('span', { key: 's', className: 'node-stat-value' }, data.closed ? '🟢 مغلق' : '🔴 مفتوح')
+                            ])
+                        ]
+                    ),
+                    React.createElement(Handle, { key: 'source', type: 'source', position: Position.Right })
+                ]);
             }
-        };
 
-        // Custom Node Component
-        const CircuitNode = ({ data, selected, id }) => {
-            const componentType = data.type || 'resistor';
-            const config = COMPONENT_TYPES[componentType];
-            
-            const v = Number(data.voltage) || 0;
-            const r = Number(data.resistance) || 0;
-            const i = Number(data.current) || 0;
-            const p = v * i;
-            const c = Number(data.capacitance) || 0;
-            
-            const getDisplayValue = () => {
-                if (componentType === 'battery') return `${v}V`;
-                if (componentType === 'resistor') return `${r}Ω`;
-                if (componentType === 'capacitor') return `${c}μF`;
-                if (componentType === 'led') return `${v}V`;
-                if (componentType === 'switch') return data.closed ? 'مغلق' : 'مفتوح';
-                if (componentType === 'ammeter') return `${i.toFixed(3)}A`;
-                if (componentType === 'voltmeter') return `${v.toFixed(2)}V`;
-                return '';
-            };
-            
-            return (
-                <div className={`circuit-node ${selected ? 'selected' : ''} ${componentType}`}>
-                    <Handle type="target" position={Position.Left} />
-                    <div className="node-header">
-                        <div className="node-title">
-                            <span>{config.icon}</span>
-                            <span>{data.label || config.label}</span>
-                        </div>
-                        <span className={`node-badge ${componentType}`}>{getDisplayValue()}</span>
-                    </div>
-                    <div className="node-body">
-                        {componentType !== 'switch' && (
-                            <>
-                                <div className="node-stat">
-                                    <span className="node-stat-label">الجهد:</span>
-                                    <span className="node-stat-value">{v.toFixed(2)} V</span>
-                                </div>
-                                <div className="node-stat">
-                                    <span className="node-stat-label">التيار:</span>
-                                    <span className="node-stat-value">{i.toFixed(3)} A</span>
-                                </div>
-                                {r > 0 && (
-                                    <div className="node-stat">
-                                        <span className="node-stat-label">المقاومة:</span>
-                                        <span className="node-stat-value">{r} Ω</span>
-                                    </div>
-                                )}
-                            </>
-                        )}
-                        {componentType === 'switch' && (
-                            <div className="node-stat">
-                                <span className="node-stat-label">الحالة:</span>
-                                <span className="node-stat-value">{data.closed ? '🟢 مغلق' : '🔴 مفتوح'}</span>
-                            </div>
-                        )}
-                    </div>
-                    <Handle type="source" position={Position.Right} />
-                </div>
-            );
-        };
-
-        // Toast Component
-        const Toast = ({ message, show }) => (
-            <div className={`toast ${show ? 'show' : ''}`}>
-                {message}
-            </div>
-        );
-
-        // Main App Component
-        function App() {
-            const nodeTypes = useMemo(() => ({
-                circuit: CircuitNode
-            }), []);
-            
-            const [nodes, setNodes, onNodesChange] = useNodesState([]);
-            const [edges, setEdges, onEdgesChange] = useEdgesState([]);
-            const [selectedNode, setSelectedNode] = useState(null);
-            const [darkMode, setDarkMode] = useState(false);
-            const [toast, setToast] = useState({ show: false, message: '' });
-            const [connectionMode, setConnectionMode] = useState(false);
-            const [circuitStats, setCircuitStats] = useState({
-                totalResistance: 0,
-                totalVoltage: 0,
-                totalCurrent: 0,
-                totalPower: 0,
-                nodeCount: 0,
-                edgeCount: 0
-            });
-            
-            const reactFlowWrapper = useRef(null);
-            
-            // Show toast notification
-            const showToast = useCallback((message) => {
-                setToast({ show: true, message });
-                setTimeout(() => setToast({ show: false, message: '' }), 3000);
-            }, []);
-            
-            // Calculate circuit statistics
-            const calculateCircuitStats = useCallback(() => {
-                const batteries = nodes.filter(n => n.data.type === 'battery');
-                const resistors = nodes.filter(n => n.data.type === 'resistor');
+            function App() {
+                const [nodes, setNodes, onNodesChange] = useNodesState([]);
+                const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+                const [selectedNode, setSelectedNode] = React.useState(null);
+                const [darkMode, setDarkMode] = React.useState(false);
+                const [toast, setToast] = React.useState({ show: false, message: '' });
+                const reactFlowWrapper = React.useRef(null);
                 
-                const totalVoltage = batteries.reduce((sum, n) => sum + (Number(n.data.voltage) || 0), 0);
-                const totalResistance = resistors.reduce((sum, n) => {
-                    const r = Number(n.data.resistance) || 0;
-                    return r > 0 ? sum + r : sum;
-                }, 0);
+                const showToast = React.useCallback(function(message) {
+                    setToast({ show: true, message: message });
+                    setTimeout(function() { setToast({ show: false, message: '' }); }, 3000);
+                }, []);
                 
-                const totalCurrent = totalResistance > 0 ? totalVoltage / totalResistance : 0;
-                const totalPower = totalVoltage * totalCurrent;
+                React.useEffect(function() {
+                    const initialNodes = [
+                        { id: 'battery-1', type: 'circuit', position: { x: 100, y: 200 }, data: { type: 'battery', label: 'بطارية رئيسية', voltage: 12, current: 0 } },
+                        { id: 'resistor-1', type: 'circuit', position: { x: 400, y: 150 }, data: { type: 'resistor', label: 'مقاومة R1', voltage: 0, current: 0, resistance: 100 } },
+                        { id: 'resistor-2', type: 'circuit', position: { x: 400, y: 300 }, data: { type: 'resistor', label: 'مقاومة R2', voltage: 0, current: 0, resistance: 200 } },
+                        { id: 'led-1', type: 'circuit', position: { x: 700, y: 225 }, data: { type: 'led', label: 'LED أخضر', voltage: 2, current: 0.02, resistance: 100 } }
+                    ];
+                    
+                    const initialEdges = [
+                        { id: 'e1-2', source: 'battery-1', target: 'resistor-1', type: 'smoothstep', animated: true },
+                        { id: 'e1-3', source: 'battery-1', target: 'resistor-2', type: 'smoothstep', animated: true },
+                        { id: 'e2-4', source: 'resistor-1', target: 'led-1', type: 'smoothstep', animated: true },
+                        { id: 'e3-4', source: 'resistor-2', target: 'led-1', type: 'smoothstep', animated: true }
+                    ];
+                    
+                    setNodes(initialNodes);
+                    setEdges(initialEdges);
+                }, []);
                 
-                setCircuitStats({
-                    totalResistance,
-                    totalVoltage,
-                    totalCurrent,
-                    totalPower,
-                    nodeCount: nodes.length,
-                    edgeCount: edges.length
-                });
-            }, [nodes, edges]);
-            
-            useEffect(() => {
-                calculateCircuitStats();
-            }, [nodes, edges, calculateCircuitStats]);
-            
-            // Handle node selection
-            const onSelectionChange = useCallback(({ nodes: selectedNodes }) => {
-                setSelectedNode(selectedNodes.length > 0 ? selectedNodes[0] : null);
-            }, []);
-            
-            // Handle property changes
-            const handlePropertyChange = (key, value) => {
-                if (!selectedNode) return;
+                const onSelectionChange = React.useCallback(function(params) {
+                    const selectedNodes = params.nodes || [];
+                    setSelectedNode(selectedNodes.length > 0 ? selectedNodes[0] : null);
+                }, []);
                 
-                const updatedNodes = nodes.map(node => {
-                    if (node.id === selectedNode.id) {
-                        const updatedData = { ...node.data, [key]: value };
-                        setSelectedNode({ ...node, data: updatedData });
-                        return { ...node, data: updatedData };
-                    }
-                    return node;
-                });
-                setNodes(updatedNodes);
-            };
-            
-            // Delete selected node
-            const deleteSelectedNode = useCallback(() => {
-                if (!selectedNode) return;
-                
-                setNodes(nds => nds.filter(n => n.id !== selectedNode.id));
-                setEdges(eds => eds.filter(e => e.source !== selectedNode.id && e.target !== selectedNode.id));
-                setSelectedNode(null);
-                showToast('تم حذف العنصر ✓');
-            }, [selectedNode, showToast]);
-            
-            // Add new node from drag
-            const onDragOver = useCallback((event) => {
-                event.preventDefault();
-                event.dataTransfer.dropEffect = 'move';
-            }, []);
-            
-            const onDrop = useCallback((event) => {
-                event.preventDefault();
-                
-                const type = event.dataTransfer.getData('application/reactflow');
-                if (!type || !COMPONENT_TYPES[type]) return;
-                
-                const position = reactFlowWrapper.current
-                    ? {
-                        x: event.clientX - reactFlowWrapper.current.getBoundingClientRect().left,
-                        y: event.clientY - reactFlowWrapper.current.getBoundingClientRect().top
-                    }
-                    : { x: event.clientX, y: event.clientY };
-                
-                const newNode = {
-                    id: `${type}-${Date.now()}`,
-                    type: 'circuit',
-                    position,
-                    data: {
-                        type,
-                        label: `${COMPONENT_TYPES[type].label} ${nodes.length + 1}`,
-                        ...COMPONENT_TYPES[type].defaults
-                    }
+                const handlePropertyChange = function(key, value) {
+                    if (!selectedNode) return;
+                    const updatedNodes = nodes.map(function(node) {
+                        if (node.id === selectedNode.id) {
+                            const updatedData = Object.assign({}, node.data, { [key]: value });
+                            setSelectedNode(Object.assign({}, node, { data: updatedData }));
+                            return Object.assign({}, node, { data: updatedData });
+                        }
+                        return node;
+                    });
+                    setNodes(updatedNodes);
                 };
                 
-                setNodes(nds => nds.concat(newNode));
-                showToast(`تمت إضافة ${COMPONENT_TYPES[type].label} ✓`);
-            }, [nodes, showToast]);
-            
-            // Handle edge connections
-            const onConnect = useCallback((params) => {
-                setEdges(eds => addEdge({
-                    ...params,
-                    type: 'smoothstep',
-                    animated: true,
-                    style: { stroke: '#3b82f6', strokeWidth: 2 },
-                    markerEnd: { type: MarkerType.ArrowClosed, color: '#3b82f6' }
-                }, eds));
-                showToast('تم ربط المكونات ✓');
-            }, [showToast]);
-            
-            // Drag start from sidebar
-            const onDragStart = (event, nodeType) => {
-                event.dataTransfer.setData('application/reactflow', nodeType);
-                event.dataTransfer.effectAllowed = 'move';
-            };
-            
-            // Save circuit to localStorage
-            const saveCircuit = useCallback(() => {
-                const circuitData = {
-                    nodes,
-                    edges,
-                    timestamp: new Date().toISOString(),
-                    stats: circuitStats
-                };
-                localStorage.setItem('savedCircuit', JSON.stringify(circuitData));
-                showToast('تم حفظ الدائرة بنجاح ✓');
-            }, [nodes, edges, circuitStats, showToast]);
-            
-            // Load circuit from localStorage
-            const loadCircuit = useCallback(() => {
-                const saved = localStorage.getItem('savedCircuit');
-                if (saved) {
-                    const data = JSON.parse(saved);
-                    setNodes(data.nodes || []);
-                    setEdges(data.edges || []);
-                    showToast('تم تحميل الدائرة ✓');
-                } else {
-                    showToast('لا توجد دائرة محفوظة');
-                }
-            }, [showToast]);
-            
-            // Clear canvas
-            const clearCanvas = useCallback(() => {
-                if (nodes.length === 0) {
-                    showToast('اللوحة فارغة بالفعل');
-                    return;
-                }
-                setNodes([]);
-                setEdges([]);
-                setSelectedNode(null);
-                showToast('تم مسح اللوحة ✓');
-            }, [nodes, showToast]);
-            
-            // Export as PNG
-            const exportAsPNG = useCallback(() => {
-                showToast('جارٍ تصدير الصورة...');
-                // Using html2canvas for export
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js';
-                script.onload = () => {
-                    const canvas = document.querySelector('.react-flow');
-                    if (canvas && window.html2canvas) {
-                        window.html2canvas(canvas).then(canvas => {
-                            const link = document.createElement('a');
-                            link.download = `circuit-${Date.now()}.png`;
-                            link.href = canvas.toDataURL();
-                            link.click();
-                            showToast('تم تصدير الصورة ✓');
-                        });
-                    }
-                };
-                document.head.appendChild(script);
-            }, [showToast]);
-            
-            // Toggle dark mode
-            const toggleDarkMode = useCallback(() => {
-                setDarkMode(prev => !prev);
-                document.body.classList.toggle('dark-mode', !darkMode);
-            }, [darkMode]);
-            
-            // Initial setup
-            useEffect(() => {
-                // Add initial demo circuit
-                const initialNodes = [
-                    {
-                        id: 'battery-1',
-                        type: 'circuit',
-                        position: { x: 100, y: 200 },
-                        data: { type: 'battery', label: 'بطارية رئيسية', voltage: 12, current: 0 }
-                    },
-                    {
-                        id: 'resistor-1',
-                        type: 'circuit',
-                        position: { x: 400, y: 150 },
-                        data: { type: 'resistor', label: 'مقاومة R1', voltage: 0, current: 0, resistance: 100 }
-                    },
-                    {
-                        id: 'resistor-2',
-                        type: 'circuit',
-                        position: { x: 400, y: 300 },
-                        data: { type: 'resistor', label: 'مقاومة R2', voltage: 0, current: 0, resistance: 200 }
-                    },
-                    {
-                        id: 'led-1',
-                        type: 'circuit',
-                        position: { x: 700, y: 225 },
-                        data: { type: 'led', label: 'LED أخضر', voltage: 2, current: 0.02, resistance: 100 }
-                    }
-                ];
+                const deleteSelectedNode = React.useCallback(function() {
+                    if (!selectedNode) return;
+                    setNodes(function(nds) { return nds.filter(function(n) { return n.id !== selectedNode.id; }); });
+                    setEdges(function(eds) { return eds.filter(function(e) { return e.source !== selectedNode.id && e.target !== selectedNode.id; }); });
+                    setSelectedNode(null);
+                    showToast('تم حذف العنصر ✓');
+                }, [selectedNode, showToast]);
                 
-                const initialEdges = [
-                    { id: 'e1-2', source: 'battery-1', target: 'resistor-1', type: 'smoothstep', animated: true },
-                    { id: 'e1-3', source: 'battery-1', target: 'resistor-2', type: 'smoothstep', animated: true },
-                    { id: 'e2-4', source: 'resistor-1', target: 'led-1', type: 'smoothstep', animated: true },
-                    { id: 'e3-4', source: 'resistor-2', target: 'led-1', type: 'smoothstep', animated: true }
-                ];
+                const onDragOver = React.useCallback(function(event) {
+                    event.preventDefault();
+                    event.dataTransfer.dropEffect = 'move';
+                }, []);
                 
-                setNodes(initialNodes);
-                setEdges(initialEdges);
-            }, []);
-            
-            return (
-                <div className={`app-container ${darkMode ? 'dark-mode' : ''}`}>
-                    {/* Sidebar */}
-                    <div className="sidebar">
-                        <div className="sidebar-header">
-                            <span>🔧</span>
-                            <span>صندوق الأدوات</span>
-                        </div>
-                        
-                        <div className="component-section">
-                            <div className="section-title">مصادر الطاقة</div>
-                            {['battery'].map(type => (
-                                <div
-                                    key={type}
-                                    className="component-item"
-                                    draggable
-                                    onDragStart={(e) => onDragStart(e, type)}
-                                >
-                                    <div className="component-icon">{COMPONENT_TYPES[type].icon}</div>
-                                    <div className="component-info">
-                                        <div className="component-name">{COMPONENT_TYPES[type].label}</div>
-                                        <div className="component-desc">{COMPONENT_TYPES[type].desc}</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        
-                        <div className="component-section">
-                            <div className="section-title">المكونات السلبية</div>
-                            {['resistor', 'capacitor'].map(type => (
-                                <div
-                                    key={type}
-                                    className="component-item"
-                                    draggable
-                                    onDragStart={(e) => onDragStart(e, type)}
-                                >
-                                    <div className="component-icon">{COMPONENT_TYPES[type].icon}</div>
-                                    <div className="component-info">
-                                        <div className="component-name">{COMPONENT_TYPES[type].label}</div>
-                                        <div className="component-desc">{COMPONENT_TYPES[type].desc}</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        
-                        <div className="component-section">
-                            <div className="section-title">أشباه الموصلات</div>
-                            {['led', 'switch'].map(type => (
-                                <div
-                                    key={type}
-                                    className="component-item"
-                                    draggable
-                                    onDragStart={(e) => onDragStart(e, type)}
-                                >
-                                    <div className="component-icon">{COMPONENT_TYPES[type].icon}</div>
-                                    <div className="component-info">
-                                        <div className="component-name">{COMPONENT_TYPES[type].label}</div>
-                                        <div className="component-desc">{COMPONENT_TYPES[type].desc}</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        
-                        <div className="component-section">
-                            <div className="section-title">أجهزة القياس</div>
-                            {['ammeter', 'voltmeter'].map(type => (
-                                <div
-                                    key={type}
-                                    className="component-item"
-                                    draggable
-                                    onDragStart={(e) => onDragStart(e, type)}
-                                >
-                                    <div className="component-icon">{COMPONENT_TYPES[type].icon}</div>
-                                    <div className="component-info">
-                                        <div className="component-name">{COMPONENT_TYPES[type].label}</div>
-                                        <div className="component-desc">{COMPONENT_TYPES[type].desc}</div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                const onDrop = React.useCallback(function(event) {
+                    event.preventDefault();
+                    const type = event.dataTransfer.getData('application/reactflow');
+                    if (!type || !COMPONENT_TYPES[type]) return;
                     
-                    {/* Main Canvas */}
-                    <div className="canvas-wrapper" ref={reactFlowWrapper}>
-                        <div className="canvas-toolbar">
-                            <button className="toolbar-btn" onClick={saveCircuit}>
-                                <span>💾</span> حفظ
-                            </button>
-                            <button className="toolbar-btn" onClick={loadCircuit}>
-                                <span>📂</span> تحميل
-                            </button>
-                            <button className="toolbar-btn" onClick={exportAsPNG}>
-                                <span>📸</span> تصدير
-                            </button>
-                            <button className="toolbar-btn" onClick={toggleDarkMode}>
-                                <span>{darkMode ? '☀️' : '🌙'}</span> {darkMode ? 'نهاري' : 'ليلي'}
-                            </button>
-                            <button className="toolbar-btn danger" onClick={clearCanvas}>
-                                <span>🗑️</span> مسح
-                            </button>
-                        </div>
-                        
-                        {typeof ReactFlowComponent === 'function' ? (
-                            <ReactFlowComponent
-                                nodes={nodes}
-                                edges={edges}
-                                onNodesChange={onNodesChange}
-                                onEdgesChange={onEdgesChange}
-                                onSelectionChange={onSelectionChange}
-                                onConnect={onConnect}
-                                onDragOver={onDragOver}
-                                onDrop={onDrop}
-                                nodeTypes={nodeTypes}
-                                fitView
-                                attributionPosition="bottom-left"
-                            >
-                                <Background color={darkMode ? '#334155' : '#cbd5e1'} gap={16} size={1} />
-                                <Controls />
-                                <MiniMap 
-                                    nodeColor={(n) => {
-                                        const type = n.data?.type || 'resistor';
-                                        return COMPONENT_TYPES[type]?.color || '#3b82f6';
-                                    }}
-                                    style={{ backgroundColor: darkMode ? '#1e293b' : '#f8fafc' }}
-                                />
-                            </ReactFlowComponent>
-                        ) : (
-                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100%', flexDirection: 'column' }}>
-                                <div style={{ fontSize: 48, marginBottom: 20 }}>⚡</div>
-                                <div style={{ fontSize: 18, color: '#64748b' }}>جاري تحميل المختبر الكهربائي...</div>
-                            </div>
-                        )}
-                        
-                        <div className="status-bar">
-                            <div className="status-item">
-                                <div className="status-dot"></div>
-                                <span>متصل</span>
-                            </div>
-                            <div className="status-item">
-                                <span>📦 العناصر: {circuitStats.nodeCount}</span>
-                            </div>
-                            <div className="status-item">
-                                <span>🔗 الروابط: {circuitStats.edgeCount}</span>
-                            </div>
-                            <div className="status-item">
-                                <span>⚡ الطاقة: {circuitStats.totalPower.toFixed(2)}W</span>
-                            </div>
-                        </div>
-                    </div>
+                    const position = {
+                        x: event.clientX - 300,
+                        y: event.clientY - 100
+                    };
                     
-                    {/* Properties Panel */}
-                    <div className="properties-panel">
-                        <div className="panel-header">
-                            <span>⚙️</span>
-                            <span>خصائص العنصر</span>
-                        </div>
-                        
-                        {selectedNode ? (
-                            <>
-                                <div className="input-group">
-                                    <label>اسم العنصر</label>
-                                    <input
-                                        type="text"
-                                        value={selectedNode.data.label || ''}
-                                        onChange={(e) => handlePropertyChange('label', e.target.value)}
-                                        placeholder="أدخل اسم العنصر"
-                                    />
-                                </div>
-                                
-                                {selectedNode.data.type === 'battery' && (
-                                    <div className="input-group">
-                                        <label>فولتية البطارية (V)</label>
-                                        <input
-                                            type="number"
-                                            value={selectedNode.data.voltage || 0}
-                                            onChange={(e) => handlePropertyChange('voltage', Number(e.target.value))}
-                                            step="0.1"
-                                        />
-                                    </div>
-                                )}
-                                
-                                {selectedNode.data.type === 'resistor' && (
-                                    <div className="input-group">
-                                        <label>قيمة المقاومة (Ω)</label>
-                                        <input
-                                            type="number"
-                                            value={selectedNode.data.resistance || 0}
-                                            onChange={(e) => handlePropertyChange('resistance', Number(e.target.value))}
-                                            step="1"
-                                        />
-                                    </div>
-                                )}
-                                
-                                {selectedNode.data.type === 'capacitor' && (
-                                    <div className="input-group">
-                                        <label>سعة المكثف (μF)</label>
-                                        <input
-                                            type="number"
-                                            value={selectedNode.data.capacitance || 0}
-                                            onChange={(e) => handlePropertyChange('capacitance', Number(e.target.value))}
-                                            step="1"
-                                        />
-                                    </div>
-                                )}
-                                
-                                {selectedNode.data.type === 'switch' && (
-                                    <div className="input-group">
-                                        <label>حالة المفتاح</label>
-                                        <select
-                                            value={selectedNode.data.closed ? 'closed' : 'open'}
-                                            onChange={(e) => handlePropertyChange('closed', e.target.value === 'closed')}
-                                        >
-                                            <option value="closed">مغلق (ON)</option>
-                                            <option value="open">مفتوح (OFF)</option>
-                                        </select>
-                                    </div>
-                                )}
-                                
-                                {selectedNode.data.type !== 'switch' && (
-                                    <>
-                                        <div className="input-group">
-                                            <label>الجهد المطبق (V)</label>
-                                            <input
-                                                type="number"
-                                                value={selectedNode.data.voltage || 0}
-                                                onChange={(e) => handlePropertyChange('voltage', Number(e.target.value))}
-                                                step="0.1"
-                                            />
-                                        </div>
-                                    </>
-                                )}
-                                
-                                <div className="metrics-card">
-                                    <div className="metrics-title">
+                    const newNode = {
+                        id: type + '-' + Date.now(),
+                        type: 'circuit',
+                        position: position,
+                        data: Object.assign({ type: type, label: COMPONENT_TYPES[type].label + ' ' + (nodes.length + 1) }, COMPONENT_TYPES[type].defaults)
+                    };
                     
+                    setNodes(function(nds) { return nds.concat(newNode); });
+                    showToast('تمت إضافة ' + COMPONENT_TYPES[type].label + ' ✓');
+                }, [nodes, showToast]);
+                
+                const onConnect = React.useCallback(function(params) {
+                    setEdges(function(eds) {
+                        return addEdge(Object.assign({}, params, {
+                            type: 'smoothstep',
+                            animated: true,
+                            style: { stroke: '#3b82f6', strokeWidth: 2 }
+                        }), eds);
+                    });
+                    showToast('تم ربط المكونات ✓');
+                }, [showToast]);
+                
+                const onDragStart = function(event, nodeType) {
+                    event.dataTransfer.setData('application/reactflow', nodeType);
+                    event.dataTransfer.effectAllowed = 'move';
+                };
+                
+                const saveCircuit = React.useCallback(function() {
+                    const circuitData = { nodes: nodes, edges: edges, timestamp: new Date().toISOString() };
+                    localStorage.setItem('savedCircuit', JSON.stringify(circuitData));
+                    showToast('تم حفظ الدائرة بنجاح ✓');
+                }, [nodes, edges, showToast]);
+                
+                const loadCircuit = React.useCallback(function() {
+                    const saved = localStorage.getItem('savedCircuit');
+                    if (saved) {
+                        const data = JSON.parse(saved);
+                        setNodes(data.nodes || []);
+                        setEdges(data.edges || []);
+                        showToast('تم تحميل الدائرة ✓');
+                    } else {
+                        showToast('لا توجد دائرة محفوظة');
+                    }
+                }, [showToast]);
+                
+                const clearCanvas = React.useCallback(function() {
+                    if (nodes.length === 0) {
+                        showToast('اللوحة فارغة بالفعل');
+                        return;
+                    }
+                    setNodes([]);
+                    setEdges([]);
+                    setSelectedNode(null);
+                    showToast('تم مسح اللوحة ✓');
+                }, [nodes, showToast]);
+                
+                const toggleDarkMode = React.useCallback(function() {
+                    setDarkMode(function(prev) { return !prev; });
+                    document.body.classList.toggle('dark-mode', !darkMode);
+                }, [darkMode]);
+                
+                const nodeTypes = React.useMemo(function() { return { circuit: CircuitNode }; }, []);
+                
+                const circuitStats = React.useMemo(function() {
+                    const batteries = nodes.filter(function(n) { return n.data && n.data.type === 'battery'; });
+                    const resistors = nodes.filter(function(n) { return n.data && n.data.type === 'resistor'; });
+                    
+                    const totalVoltage = batteries.reduce(function(sum, n) { return sum + (Number(n.data.voltage) || 0); }, 0);
+                    const totalResistance = resistors.reduce(function(sum, n) {
+                        const r = Number(n.data.resistance) || 0;
+                        return r > 0 ? sum + r : sum;
+                    }, 0);
+                    
+                    const totalCurrent = totalResistance > 0 ? totalVoltage / totalResistance : 0;
+                    const totalPower = totalVoltage * totalCurrent;
+                    
+                    return {
+                        totalResistance: totalResistance,
+                        totalVoltage: totalVoltage,
+                        totalCurrent: totalCurrent,
+                        totalPower: totalPower,
+                        nodeCount: nodes.length,
+                        edgeCount: edges.length
+                    };
+                }, [nodes, edges]);
+                
+                return React.createElement('div', { className: 'app-container' + (darkMode ? ' dark-mode' : '') }, [
+                    React.createElement('div', { key: 'sidebar', className: 'sidebar' }, [
+                        React.createElement('div', { key: 'header', className: 'sidebar-header' }, [
+                            React.createElement('span', { key: 'icon' }, '🔧'),
+                            React.createElement('span', { key: 'title' }, 'صندوق الأدوات')
+                        ]),
+                        React.createElement('div', { key: 'power', className: 'component-section' }, [
+                            React.createElement('div', { key: 'title', className: 'section-title' }, 'مصادر الطاقة'),
+                            React.createElement('div', {
+                                key: 'battery',
+                                className: 'component-item',
+                                draggable: true,
+                                onDragStart: function(e) { onDragStart(e, 'battery'); }
+                            }, [
+                                React.createElement('div', { key: 'icon', className: 'component-icon' }, COMPONENT_TYPES.battery.icon),
+                                React.createElement('div', { key: 'info', className: 'component-info' }, [
+                                    React.createElement('div', { key: 'name', className: 'component-name' }, COMPONENT_TYPES.battery.label),
+                                    React.createElement('div', { key: 'desc', className: 'component-desc' }, COMPONENT_TYPES.battery.desc)
+                                ])
+                            ])
+                        ]),
+                        React.createElement('div', { key: 'passive', className: 'component-section' }, [
+                            React.createElement('div', { key: 'title', className: 'section-title' }, 'المكونات السلبية'),
+                            ['resistor', 'capacitor'].map(function(type) {
+                                return React.createElement('div', {
+                                    key: type,
+                                    className: 'component-item',
+                                    draggable: true,
+                                    onDragStart: function(e) { onDragStart(e, type); }
+                                }, [
+                                    React.createElement('div', { key: 'icon', className: 'component-icon' }, COMPONENT_TYPES[type].icon),
+                                    React.createElement('div', { key: 'info', className: 'component-info' }, [
+                                        React.createElement('div', { key: 'name', className: 'component-name' }, COMPONENT_TYPES[type].label),
+                                        React.createElement('div', { key: 'desc', className: 'component-desc' }, COMPONENT_TYPES[type].desc)
+                                    ])
+                                ]);
+                            })
+                        ]),
+                        React.createElement('div', { key: 'semi', className: 'component-section' }, [
+                            React.createElement('div', { key: 'title', className: 'section-title' }, 'أشباه الموصلات'),
+                            ['led', 'switch'].map(function(type) {
+                                return React.createElement('div', {
+                                    key: type,
+                                    className: 'component-item',
+                                    draggable: true,
+                                    onDragStart: function(e) { onDragStart(e, type); }
+                                }, [
+                                    React.createElement('div', { key: 'icon', className: 'component-icon' }, COMPONENT_TYPES[type].icon),
+                                    React.createElement('div', { key: 'info', className: 'component-info' }, [
+                                        React.createElement('div', { key: 'name', className: 'component-name' }, COMPONENT_TYPES[type].label),
+                                        React.createElement('div', { key: 'desc', className: 'component-desc' }, COMPONENT_TYPES[type].desc)
+                                    ])
+                                ]);
+                            })
+                        ]),
+                        React.createElement('div', { key: 'measure', className: 'component-section' }, [
+                            React.createElement('div', { key: 'title', className: 'section-title' }, 'أجهزة القياس'),
+                            ['ammeter', 'voltmeter'].map(function(type) {
+                                return React.createElement('div', {
+                                    key: type,
+                                    className: 'component-item',
+                                    draggable: true,
+                                    onDragStart: function(e) { onDragStart(e, type); }
+                                }, [
+                                    React.createElement('div', { key: 'icon', className: 'component-icon' }, COMPONENT_TYPES[type].icon),
+                                    React.createElement('div', { key: 'info', className: 'component-info' }, [
+                                        React.createElement('div', { key: 'name', className: 'component-name' }, COMPONENT_TYPES[type].label),
+                                        React.createElement('div', { key: 'desc', className: 'component-desc' }, COMPONENT_TYPES[type].desc)
+                                    ])
+                                ]);
+                            })
+                        ])
+                    ]),
+                    React.createElement('div', { key: 'canvas', className: 'canvas-wrapper', ref: reactFlowWrapper }, [
+                        React.createElement('div', { key: 'toolbar', className: 'canvas-toolbar' }, [
+                            React.createElement('button', { key: 'save', className: 'toolbar-btn', onClick: saveCircuit }, [
+                                React.createElement('span', { key: 'icon' }, '💾'),
+                                React.createElement('span', { key: 'text' }, 'حفظ')
+                            ]),
+                            React.createElement('button', { key: 'load', className: 'toolbar-btn', onClick: loadCircuit }, [
+                                React.createElement('span', { key: 'icon' }, '📂'),
+                                React.createElement('span', { key: 'text' }, 'تحميل')
+                            ]),
+                            React.createElement('button', { key: 'mode', className: 'toolbar-btn', onClick: toggleDarkMode }, [
+                                React.createElement('span', { key: 'icon' }, darkMode ? '☀️' : '🌙'),
+                                React.createElement('span', { key: 'text' }, darkMode ? 'نهاري' : 'ليلي')
+                            ]),
+                            React.createElement('button', { key: 'clear', className: 'toolbar-btn danger', onClick: clearCanvas }, [
+                                React.createElement('span', { key: 'icon' }, '🗑️'),
+                                React.createElement('span', { key: 'text' }, 'مسح')
+                            ])
+                        ]),
+                        React.createElement(ReactFlowComponent, {
+                            key: 'flow',
+                            nodes: nodes,
+                            edges: edges,
+                            onNodesChange: onNodesChange,
+                            onEdgesChange: onEdgesChange,
+                            onSelectionChange: onSelectionChange,
+                            onConnect: onConnect,
+                            onDragOver: onDragOver,
+                            onDrop: onDrop,
+                            nodeTypes: nodeTypes,
+                            fitView: true,
+                            attributionPosition: 'bottom-left'
+                        }, [
+                            React.createElement(Background, { key: 'bg', color: darkMode ? '#334155' : '#cbd5e1', gap: 16, size: 1 }),
+                            React.createElement(Controls, { key: 'ctrl' }),
+                            React.createElement(MiniMap, {
+                                key: 'map',
+                                nodeColor: function(n) {
+                                    const type = (n.data && n.data.type) || 'resistor';
+                                    return COMPONENT_TYPES[type] ? COMPONENT_TYPES[type].color : '#3b82f6';
+                                },
+                                style: { backgroundColor: darkMode ? '#1e293b' : '#f8fafc' }
+                            })
+                        ]),
+                        React.createElement('div', { key: 'status', className: 'status-bar' }, [
+                            React.createElement('div', { key: 'conn', className: 'status-item' }, [
+                                React.createElement('div', { key: 'dot', className: 'status-dot' }),
+                                React.createElement('span', { key: 'text' }, 'متصل')
+                            ]),
+                            React.createElement('div', { key: 'nodes', className: 'status-item' }, [
+                                React.createElement('span', { key: 'text' }, '📦 العناصر: ' + circuitStats.nodeCount)
+                            ]),
+                            React.createElement('div', { key: 'edges', className: 'status-item' }, [
+                                React.createElement('span', { key: 'text' }, '🔗 الروابط: ' + circuitStats.edgeCount)
+                            ]),
+                            React.createElement('div', { key: 'power', className: 'status-item' }, [
+                                React.createElement('span', { key: 'text' }, '⚡ الطاقة: ' + circuitStats.totalPower.toFixed(2) + 'W')
+                            ])
+                        ])
+                    ]),
+                    React.createElement('div', { key: 'props', className: 'properties-panel' }, [
+                        React.createElement('div', { key: 'header', className: 'panel-header' }, [
+                            React.createElement('span', { key: 'icon' }, '⚙️'),
+                            React.createElement('span', { key: 'text' }, 'خصائص العنصر')
+                        ]),
+                        selectedNode ? [
+                            React.createElement('div', { key: 'label', className: 'input-group' }, [
+                                React.createElement('label', { key: 'l' }, 'اسم العنصر'),
+                                React.createElement('input', {
+                                    key: 'i',
+                                    type: 'text',
+                                    value: selectedNode.data.label || '',
+                                    onChange: function(e) { handlePropertyChange('label', e.target.value); }
+                                })
+                            ]),
+                            selectedNode.data.type === 'battery' ? React.createElement('div', { key: 'voltage', className: 'input-group' }, [
+                                React.createElement('label', { key: 'l' }, 'فولتية البطارية (V)'),
+                                React.createElement('input', {
+                                    key: 'i',
+                                    type: 'number',
+                                    value: selectedNode.data.voltage || 0,
+                                    onChange: function(e) { handlePropertyChange('voltage', Number(e.target.value)); },
+                                    step: '0.1'
+                                })
+                            ]) : null,
+                            selectedNode.data.type === 'resistor' ? React.createElement('div', { key: 'resistance', className: 'input-group' }, [
+                                React.createElement('label', { key: 'l' }, 'قيمة المقاومة (Ω)'),
+                                React.createElement('input', {
+                                    key: 'i',
+                                    type: 'number',
+                                    value: selectedNode.data.resistance || 0,
+                                    onChange: function(e) { handlePropertyChange('resistance', Number(e.target.value)); },
+                                    step: '1'
+                                })
+                            ]) : null,
+                            selectedNode.data.type === 'switch' ? React.createElement('div', { key: 'switch', className: 'input-group' }, [
+                                React.createElement('label', { key: 'l' }, 'حالة المفتاح'),
+                                React.createElement('select', {
+                                    key: 's',
+                                    value: selectedNode.data.closed ? 'closed' : 'open',
+                                    onChange: function(e) { handlePropertyChange('closed', e.target.value === 'closed'); }
+                                }, [
+                                    React.createElement('option', { key: 'c', value: 'closed' }, 'مغلق (ON)'),
+                                    React.createElement('option', { key: 'o', value: 'open' }, 'مفتوح (OFF)')
+                                ])
+                            ]) : null,
+                            React.createElement('div', { key: 'metrics', className: 'metrics-card' }, [
+                                React.createElement('div', { key: 'title', className: 'metrics-title' }, [
+                                    React.createElement('span', { key: 'icon' }, '📊'),
+                                    React.createElement('span', { key: 'text' }, 'التحليل الكهربائي')
+                                ]),
+                                React.createElement('div', { key: 'v', className: 'metric-row' }, [
+                                    React.createElement('span', { key: 'l', className: 'metric-label' }, 'الجهد (V):'),
+                                    React.createElement('span', { key: 'v', className: 'metric-value' }, (Number(selectedNode.data.voltage) || 0).toFixed(2) + ' V')
+                                ]),
+                                React.createElement('div', { key: 'i', className: 'metric-row' }, [
+                                    React.createElement('span', { key: 'l', className: 'metric-label' }, 'التيار (I):'),
+                                    React.createElement('span', { key: 'i', className: 'metric-value' }, (Number(selectedNode.data.current) || 0).toFixed(3) + ' A')
+                                ]),
+                                selectedNode.data.resistance > 0 ? React.createElement('div', { key: 'r', className: 'metric-row' }, [
+                                    React.createElement('span', { key: 'l', className: 'metric-label' }, 'المقاومة (R):'),
+                                    React.createElement('span', { key: 'r', className: 'metric-value' }, selectedNode.data.resistance + ' Ω')
+                                ]) : null,
+                                React.createElement('div', { key: 'p', className: 'metric-row' }, [
+                                    React.createElement('span', { key: 'l', className: 'metric-label' }, 'القدرة (P):'),
+                                    React.createElement('span', { key: 'p', className: 'metric-value' }, ((Number(selectedNode.data.voltage) || 0) * (Number(selectedNode.data.current) || 0)).toFixed(3) + ' W')
+                                ])
+                            ]),
+                            React.createElement('button', {
+                                key: 'delete',
+                                className: 'toolbar-btn danger',
+                                onClick: deleteSelectedNode,
+                                style: { width: '100%', marginTop: '20px', justifyContent: 'center' }
+                            }, [
+                                React.createElement('span', { key: 'icon' }, '🗑️'),
+                                React.createElement('span', { key: 'text' }, 'حذف العنصر')
+             
